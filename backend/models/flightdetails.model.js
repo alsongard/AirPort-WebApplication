@@ -8,7 +8,7 @@ const FlightSchema = new mongoose.Schema(
         destination:{type:String, required:true},
         departureTime:{type:Date, required:true},
         arrivalTime:{type:Date, required:true},
-        totalSeats:{type:Date, required:true},
+        totalSeats:{type:Number, required:true},
         price:{type:Number, required:true}
     },
     {
