@@ -13,6 +13,8 @@ const saltRounds = 10;
 
 
 
+app.use(express.json());
+app.use(express.urlencoded({extended:false}));
 app.get("/", (req,res)=>{
     res.status(200).send("<h1>Welcome</h1>");
 })
@@ -34,6 +36,7 @@ app.post("/register",async (req,res)=>{
         const passwdHash = await bcrypt.hash(UserPassword, saltRounds);
         const user_created = await User.create({email:UserEmail, password:passwdHash});
         console.log(user_created);
+        return res.status(200).json({success:true, msg:"Registered Successfully"});
     }
     catch(err)
     {
@@ -53,8 +56,8 @@ app.post("/login", async (req,res)=>{
             return res.status(400).json({success:false, msg:"Invalid Input"})
         }
         // check if user exists first
-        const foundUser = await User.find({email: UserEmail});
-        console.log(foundUser);
+        const foundUser = await User.findOne({email: UserEmail});
+        // console.log(foundUser); 
         if (foundUser.length === 0)
         {
             return res.status(400).json({success:false, msg:"No user Found"})
@@ -75,16 +78,17 @@ app.post("/login", async (req,res)=>{
 
 // registeruserDetails: form 
 app.post("/regUserDetail", async (req, res)=>{
-    const {firstName, middleName, lastName} = req.body;
+    const {firstName, middleName, lastName, age, passportNumber, userId} = req.body;
     try
     {
-        if (!firstName || !middleName || !lastName)
+        if (!firstName || !middleName || !lastName || !age || !passportNumber || !userId)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"})
         }
-    
-        const userDetails = await new UserDetail.create({firstName: firstName, middleName: middleName, lastName: lastName })
-        console.log(userDetails);
+        console.log(`firstName: ${firstName} \n middleName: ${middleName} \n lastName: ${lastName} \n age: ${age} \n passportNumber: ${passportNumber} \n userId: ${userId}`);
+
+        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId});
+        // console.log(userDetails);
         if (userDetails)
         {
             return res.status(200).json({success:true, msg:"registered successfully", data:{first_name: userDetails.firstName, middle_name:userDetails.middleName, last_name:userDetails.lastName,user_id:userDetails.userId}})
@@ -129,7 +133,7 @@ app.get("/flightDetails", async (req, res)=>{
         const flight_details = await Flight.find();
         if (flight_details.length === 0)
         {
-            return res.status(500).json({success:false, msg:"Internal Server Error: Refresh Again"})
+            return res.status(500).json({success:false, msg:"No Flights At the Moment Try Again Later"})
         }
         return res.status(200).json({success:true, data:flight_details})
     }
@@ -158,7 +162,7 @@ app.post("/booking", async (req,res)=>{
         {
             return res.status(500).json({success:false, msg:"Server Error"})
         }
-        return res.status(200).json({success:true, msg:"Flight created", data:flight_created});
+        return res.status(200).json({success:true, msg:"Flight created", data:booking_created});
     }
     catch(err)
     {
@@ -243,7 +247,7 @@ app.post("/flightDetails", async (req,res)=>{
         {
             return res.status(400).json({success:false, msg:"Invalid input"});
         }
-        const flight_created = Flight.create({flightName:flightName, departure:departure ,destination:destination, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price})
+        const flight_created = await Flight.create({flightName:flightName, departure:departure ,destination:destination, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price})
         if (!flight_created)
         {
             return res.status(500).json({success:false, msg:"Error creating flight details"});
@@ -257,9 +261,25 @@ app.post("/flightDetails", async (req,res)=>{
     }
 })
 
+const mongo_url = process.env.MONGO_URL;
+// console.log(mongo_url) working
+
+async function ConnectDB()
+{
+    try
+    {
+        await mongoose.connect(mongo_url);
+        console.log('Connected to MongoDB');
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+    }
+}
 
 
 const port = process.env.PORT_NUMBER;
 app.listen(port, ()=>{
     console.log(`Listening on port: ${port}`);
 })
+ConnectDB();
