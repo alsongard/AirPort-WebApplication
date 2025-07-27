@@ -185,7 +185,9 @@ app.get("/booking", async (req,res)=>{
     {
         return res.status(404).json({success:false, msg:`No user found with id: ${userId}`})
     }
-    const foundBooking = await Booking.find({userId:userId});
+    const foundBooking = await Booking.find({userId:userId}).populate("flightId",  "flightName  departure  destination  departureTime  arrivalTime  price");
+    // flightName,  departure, destination, departureTime,  arrivalTime, price
+    console.log(foundBooking);
     if (foundBooking)
     {
         return res.status(200).json({success:true, data:foundBooking}); 
@@ -223,7 +225,7 @@ app.get("/payment", async (req,res)=>{
         {
             return res.status(400).json({success:false, msg:"invalid input"});
         }
-        const foundPayment = await bookingID.findOne({bookingID:bookingID});
+        const foundPayment = await PayMent.findOne({bookingID:bookingID}).populate("bookingID");
         if (!foundPayment)
         {
             return res.status(404).json({success:false, msg:"No payment with bookingID"});
