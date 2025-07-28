@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
-
+import axios from "axios";
+import {useNavigate} from "react-router-dom"
 export default function RegLogin() {
+
+  const navigate = useNavigate()
+
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -19,10 +23,7 @@ export default function RegLogin() {
     });
   }
 
-  const handleSubmit = (e) => {
-    console.log('Form submitted:', formData);
-    // Add your form submission logic here
-  };
+
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
@@ -34,7 +35,86 @@ export default function RegLogin() {
       });
     }
   };
+  
+  const [isTouched, setIsTouched] = useState({});
+  const handleBlur=(event)=>{
+    const {name}  = event.target;
+    setIsTouched((prevData)=>{
+      return {...prevData, [name]:true}
+    })
+  }
 
+  const password_match_result = isTouched.confirmPassword ? formData.confirmPassword === formData.password : "";
+
+  // we need password_match_result to be false to set message as error
+  const password_match_err_msg = !password_match_result && isTouched.confirmPassword ? "Passwords do not match" : "";
+
+
+
+  const [regSuccess, setRegSuccess]  = useState("");
+  const handleSubmit =  async (event) => {
+    event.preventDefault();
+    console.log('Form submitted:', formData);
+    // Add your form submission logic here
+    if (isLogin)// checks if its true
+    {
+      try
+      {
+        // functioning done
+        console.log(`Login: ${isLogin}`)
+        const res = await axios.post("http://localhost:5000/login", {
+          UserEmail:formData.useremail,
+          UserPassword:formData.password
+        })
+        console.log(`This is res`);
+        console.log(res.data);
+        if (res.data.success)
+        {
+          const {user_id} = res.data.data;
+          const {user_email} = res.data.data;
+          const {token} = res.data.data;
+          console.log(`This is user_id and typeof : ${typeof(user_id)}`);
+          console.log(user_id);
+          console.log(`This is ${user_id} || ${user_email} || ${token}`);
+          localStorage.setItem("token", token);
+          localStorage.setItem("user_email", user_email);
+          localStorage.setItem("User_id", user_id);
+        }
+        // navigate("/ profie");
+      }
+      catch(err)
+      {
+        console.log(`Error : ${err}`);
+        alert(`Error ${err}`)
+      }
+    }
+    if (!isLogin)
+    {
+      
+      try
+      {
+        console.log(`Registration: ${isLogin}`)
+        const res = await axios.post("http://localhost:5000/register", {
+          UserEmail:formData.useremail,
+          UserPassword:formData.password
+        })
+        console.log(res);
+        console.log(res.data.success);
+        if (res.data.success)
+        {
+          setRegSuccess("Registered Successfully! Now Login");
+          setTimeOut(()=>{
+            setRegSuccess("")
+          }, 8000)
+        }
+      }
+      catch(err)
+      {
+        console.log(`Error : ${err}`);
+        alert(`Error ${err}`)
+      }
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
       {/* Background decoration */}
@@ -88,7 +168,7 @@ export default function RegLogin() {
           </div>
 
           {/* Form */}
-          <div className="p-8 pt-0 space-y-6">
+          <form onSubmit={handleSubmit} className="p-8 pt-0 space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
               <label htmlFor="useremail" className="block text-sm font-medium text-white/90">
@@ -122,6 +202,7 @@ export default function RegLogin() {
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
+                  onBlur={handleBlur}
                   id="password"
                   name="password"
                   value={formData.password}
@@ -141,9 +222,7 @@ export default function RegLogin() {
             </div>
 
             {/* Confirm Password Field - Only show for registration */}
-            <div className={`space-y-2 transition-all duration-500 overflow-hidden ${
-              isLogin ? 'max-h-0 opacity-0' : 'max-h-32 opacity-100'
-            }`}>
+            <div className={`space-y-2 transition-all duration-500 overflow-hidden ${isLogin ? 'max-h-0 opacity-0' : 'max-h-32 opacity-100'}`}>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-white/90">
                 Confirm Password
               </label>
@@ -157,6 +236,7 @@ export default function RegLogin() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                   placeholder="Confirm your password"
                   required={!isLogin}
@@ -170,15 +250,19 @@ export default function RegLogin() {
                 </button>
               </div>
             </div>
-
+            {
+              regSuccess && (<p className="text-green-700">{regSuccess}</p>)
+            }
+            {
+              password_match_err_msg && (<p className='text-red-500'>{password_match_err_msg}</p>)
+            }
             {/* Submit Button */}
-            <button
-              type="button"
-              onClick={handleSubmit}
+            <input
+              type="submit"
+              value={isLogin ? 'Sign In' : 'Create Account'}
               className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-transparent transform hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              {isLogin ? 'Sign In' : 'Create Account'}
-            </button>
+            />
+              
 
             {/* Additional Links */}
             <div className="text-center space-y-3">
@@ -199,7 +283,7 @@ export default function RegLogin() {
                 </button>
               </p>
             </div>
-          </div>
+          </form>
         </div>
 
         {/* Footer */}
