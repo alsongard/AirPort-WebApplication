@@ -35,7 +35,7 @@ export default function LandingPage()
     ];
 
     return (
-        <div className="w-full h-full ">  
+        <div className="w-full  min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white overflow-hidden">  
             <section className="relative z-10 px-6 py-20">
                 <div className="max-w-7xl mx-auto text-center">
                     <div className="mb-8 animate-fade-in">

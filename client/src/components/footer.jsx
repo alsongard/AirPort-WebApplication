@@ -5,7 +5,7 @@ import { Plane, Clock, MapPin, Users, Star, ArrowRight, Menu, X, Phone, Mail, Gl
 export default function Footer()
 {
     return (
-        <footer className="relative z-10 px-6 py-12  border-t border-white/10 bg-black/20 backdrop-blur-md">
+        <footer className="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900  overflow-hidden z-10 px-6 py-12  border-t border-white/10 bg-black/20 backdrop-blur-md">
         {/* footer */}
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
