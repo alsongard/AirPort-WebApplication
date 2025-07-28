@@ -7,7 +7,7 @@ function Header(){
         <header className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gradient-to-r from-slate-800 to-[rgba(69,85,108,0.4)]  shadow">
             <div className="text-2xl font-bold text-blue-600">
                 {/* Logo */}
-                Logo
+                SkyLux Travel
             </div>
             <nav>
                 <ul className="flex space-x-6 text-gray-700 font-medium">
