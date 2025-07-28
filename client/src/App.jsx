@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import LandingPage from "./pages/landingPage";
+import { BrowserRouter, Routes, Route, Outlet} from "react-router-dom";
+import Header from "./components/header.jsx";
+import RegLogin from  "./pages/register_login";
+import AboutPage from "./pages/aboutPage";
+import ServicesPage from "./pages/servicesPage"
+import ContactPage from "./pages/contactPage";
+import Footer from "./components/footer";
+function App()
+{
+    const [darkTheme, setDarkTheme] = useState(false);
+    let bg;
+    useEffect(()=>{
+        bg = window.matchMedia('(prefers-color-scheme:dark)').matches;
+        console.log(`bg : ${bg}`);
+        setDarkTheme(bg);
+    },[])
 
-function App() {
-  const [count, setCount] = useState(0)
+    const dark = darkTheme ? "dark": "";
+    console.log(`dark: ${dark}`);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+    return (
+        
+        <div className={`${dark}`}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<div><Header/><Outlet/><Footer/></div>}>
+                        <Route index element={<LandingPage/>}/>
+                        <Route  path="register" element={<RegLogin/>}/>
+                        <Route  path="about" element={<AboutPage/>}/>
+                        <Route  path="services" element={<ServicesPage/>}/>
+                        <Route  path="contact" element={<ContactPage/>}/>
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </div>
+    )
 }
-
-export default App
+export default App;
