@@ -1,6 +1,3 @@
-import Header from "../components/header";
-import passenger_view_1 from "../assets/images/passenger_view_1.jpg"
-import medium_passenger from "../assets/images/medium_passenger.jpg"
 import React, { useState, useEffect } from 'react';
 import { Plane, Clock, MapPin, Users, Star, ArrowRight, Menu, X, Phone, Mail, Globe } from 'lucide-react';
 
