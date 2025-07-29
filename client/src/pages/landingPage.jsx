@@ -46,7 +46,7 @@ export default function LandingPage()
                         </h1>
                         <p className="text-xl md:text-2xl text-blue-200 mb-8 max-w-3xl mx-auto">
                         Experience seamless journeys with cutting-edge technology, world-class amenities, 
-                        and unparalleled service at SkyPort International Airport.
+                        and unparalleled service at SkyLux International Airport.
                         </p>
                     </div>
 
