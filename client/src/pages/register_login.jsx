@@ -79,8 +79,8 @@ export default function RegLogin() {
           localStorage.setItem("token", token);
           localStorage.setItem("user_email", user_email);
           localStorage.setItem("User_id", user_id);
+          navigate("/profile");
         }
-        // navigate("/ profie");
       }
       catch(err)
       {

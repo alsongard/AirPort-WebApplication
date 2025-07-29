@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const UserPreferencesSchema = new Schema({
     userId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
@@ -19,6 +19,7 @@ const UserPreferencesSchema = new Schema({
         default: 'Vegetarian'
     },
     classPreference: {
+        type:String,
         enum: ['Economy', 'Premium Economy', 'Business', 'First'],
         default: 'Business'
     },
@@ -30,10 +31,6 @@ const UserPreferencesSchema = new Schema({
         type: Boolean,
         default: true
     },
-    smsAlerts: {
-        type: Boolean,
-        default: false
-    }
 });
 
 const UserPreference = mongoose.model('UserPreference', UserPreferencesSchema);

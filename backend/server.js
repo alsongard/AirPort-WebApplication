@@ -1,13 +1,22 @@
 const express = require("express");
 require("dotenv").config();
 const mongoose = require("mongoose");
+const cors = require("cors");
 const app = express();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+
+
+// models
 const User = require("./models/user.model");
 const UserDetail = require("./models/userdetails.model");
 const Flight = require("./models/flightdetails.model");
 const Booking = require("./models/booking.model");
 const PayMent = require("./models/paymentdetails.model");
+const UserPreference = require("./models/userPreferences.model");
+
+// configurations
 const saltRounds = 10;
 
 
@@ -19,19 +28,30 @@ app.get("/", (req,res)=>{
     res.status(200).send("<h1>Welcome</h1>");
 })
 
-
+corsOption = {
+    origin: "*"
+}
+app.use(cors(corsOption))
 
 
 
 // create user
 app.post("/register",async (req,res)=>{
     const {UserEmail, UserPassword} = req.body;
-
+    console.log(UserEmail, UserPassword)
     try
     {
         if (!UserEmail || !UserPassword)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"});
+        }
+        // check if user exist
+        const emailAlreadyExist = await User.findOne({email:UserEmail});
+        console.log(`emailAlreadyExist: ${emailAlreadyExist}`);
+        if (emailAlreadyExist)
+        {
+            console.log("Email already Exist");
+            return res.status(409).json({success:false, msg:'Email already exist'})
         }
         const passwdHash = await bcrypt.hash(UserPassword, saltRounds);
         const user_created = await User.create({email:UserEmail, password:passwdHash});
@@ -57,17 +77,24 @@ app.post("/login", async (req,res)=>{
         }
         // check if user exists first
         const foundUser = await User.findOne({email: UserEmail});
+        // console.log("foundUser"); 
         // console.log(foundUser); 
-        if (foundUser.length === 0)
+        const userObject = {id: foundUser._id};
+
+        // console.log(`Typeof : ${typeof(foundUser._id)}`);
+        // console.log(foundUser._id);
+        const token = jwt.sign(userObject, process.env.JWT_SCRT);
+        if (!foundUser) // is null when findOne() has zero result
         {
             return res.status(400).json({success:false, msg:"No user Found"})
         }
         const result = await bcrypt.compare(UserPassword, foundUser.password)
+        console.log(`Result : ${result}`);
         if (!result)
         {
             return res.status(500).json({success:false, msg:"Invalid Credentials"});
         }
-        return res.status(200).json({success:true, data:{user_email:foundUser.email, user_id:foundUser.id}});
+        return res.status(200).json({success:true, data:{user_email:foundUser.email, user_id:foundUser.id, token: token}});
     }
     catch(err)
     {
@@ -78,16 +105,16 @@ app.post("/login", async (req,res)=>{
 
 // registeruserDetails: form 
 app.post("/regUserDetail", async (req, res)=>{
-    const {firstName, middleName, lastName, age, passportNumber, userId} = req.body;
+    const {firstName, middleName, lastName, age, passportNumber, userId, phone, dateBirth,emergencyContact } = req.body;
     try
     {
-        if (!firstName || !middleName || !lastName || !age || !passportNumber || !userId)
+        if (!firstName || !middleName || !lastName || !age || !passportNumber || !userId || !phone || !dateBirth || !emergencyContact)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"})
         }
-        console.log(`firstName: ${firstName} \n middleName: ${middleName} \n lastName: ${lastName} \n age: ${age} \n passportNumber: ${passportNumber} \n userId: ${userId}`);
+        console.log(`firstName: ${firstName} \n middleName: ${middleName} \n lastName: ${lastName} \n age: ${age} \n passportNumber: ${passportNumber} \n userId: ${userId} \n phone: ${phone} \n dateBirth: ${dateBirth} \n emergencyContact: ${emergencyContact}`);
 
-        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId});
+        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId, phone:phone,dateBirth: dateBirth, emergencyContact:emergencyContact });
         // console.log(userDetails);
         if (userDetails)
         {
@@ -101,6 +128,7 @@ app.post("/regUserDetail", async (req, res)=>{
     }
 })
 
+
 // view user details
 app.get("/getUserDetail/:id", async (req,res)=>{
     const {id} = req.params;
@@ -113,7 +141,7 @@ app.get("/getUserDetail/:id", async (req,res)=>{
         const foundUserDetail = await UserDetail.findOne({userId:id});
         if (!foundUserDetail)
         {
-            return res.status(500).json({success:false, msg:`No user with the given Id: ${id}`});
+            return res.status(404).json({success:false, msg:`No user with the given Id: ${id}`});
         }
         return res.status(200).json({success:true, msg:"user details retrieved", data:{first_name: foundUserDetail.firstName, middle_name:foundUserDetail.middleName, last_name:foundUserDetail.lastName,user_id:foundUserDetail.userId}})
     }
@@ -126,6 +154,63 @@ app.get("/getUserDetail/:id", async (req,res)=>{
     
 })
 
+app.post('/userpreferences', async (req, res)=>{
+    const {userId, seatPreference, mealPreference, classPreference, notifications, newsletter} = req.body;
+    console.log(`userId: ${userId} \n seatPreference: ${seatPreference} \n mealPreference: ${mealPreference} \n classPreference: ${classPreference} \n notifications: ${notifications} \n newsletter: ${newsletter}`);
+
+    if (!userId || !seatPreference || !mealPreference || !classPreference || !notifications || !newsletter) {
+        return res.status(400).json({success:false, msg:"Invalid INput"});
+    }
+    try
+    {
+        // check if user exists
+        const foundUser = await User.findOne({_id:userId});
+        if (!foundUser)
+        {
+            return res.status(404).json({success:false, msg:`No user found with id: ${userId}`})
+        }
+        const userPreference = await UserPreference.create({
+            userId,
+            seatPreference,
+            mealPreference,
+            classPreference,
+            notifications,
+            newsletter
+        });
+        console.log(userPreference);
+        if (!userPreference) {
+            return res.status(500).json({success:false, msg:"Server Error"});
+        }
+        return res.status(200).json({success:true, msg:"User preferences saved", data:userPreference});
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:"Internal Server Error"});
+    }
+})
+app.get("/userpreferences/:userId", async (req,res)=>{
+    const {userId} = req.params;
+    if (!userId)
+    {
+        return res.status(400).json({success:false, msg:"Invalid Input"});
+    }
+    try
+    {
+        const foundUserPreference = await UserPreference.findOne({userId:userId});
+        if (!foundUserPreference)
+        {
+            return res.status(404).json({success:false, msg:`No user preferences found for user with id: ${userId}`});
+        }
+        return res.status(200).json({success:true, data:foundUserPreference});
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:"Internal Server Error"});
+    }
+
+})
 
 app.get("/flightDetails", async (req, res)=>{
     try

@@ -24,12 +24,11 @@ export default function ProfileComponent()
         const res = await axios.get("http://localhost:5000/getUserDetail/688596970090340009d242f8");
         console.log(`This is response`);
         console.log(res);
-        if (res.status === 404)
+        if (res.data.success)
         {
-          setDisplayRegForm(true);
-    
+            console.log(res.data.data); // success,otherproperties
+            
         }
-        console.log(res.data.data); // success,otherproperties
     }
     catch(err)
     {
