@@ -7,6 +7,8 @@ import AboutPage from "./pages/aboutPage";
 import ServicesPage from "./pages/servicesPage"
 import ContactPage from "./pages/contactPage";
 import Footer from "./components/footer";
+import ProfilePage from "./pages/profilePage";
+import RandomPage from "./pages/lostRandomPage.jsx";
 function App()
 {
     const [darkTheme, setDarkTheme] = useState(false);
@@ -32,6 +34,8 @@ function App()
                         <Route  path="about" element={<AboutPage/>}/>
                         <Route  path="services" element={<ServicesPage/>}/>
                         <Route  path="contact" element={<ContactPage/>}/>
+                        <Route path="profile" element={<ProfilePage/>}/>
+                        <Route path="*" element={<RandomPage/>}/>
                     </Route>
                 </Routes>
             </BrowserRouter>
