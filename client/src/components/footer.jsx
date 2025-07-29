@@ -14,7 +14,7 @@ export default function Footer()
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
                   <Plane className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold">SkyPort</span>
+                <span className="text-xl font-bold">SkyLux</span>
               </div>
               <p className="text-blue-200 text-sm">
                 Your gateway to the world. Experience the future of air travel with us.
@@ -50,7 +50,7 @@ export default function Footer()
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4" />
-                  <span>info@skyport.com</span>
+                  <span>info@SkyLux.com</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4" />
@@ -61,7 +61,7 @@ export default function Footer()
           </div>
           
           <div className="border-t border-white/10 pt-8 text-center text-sm text-blue-200">
-            <p>&copy; 2025 SkyPort International Airport. All rights reserved.</p>
+            <p>&copy; 2025 SkyLux International Airport. All rights reserved.</p>
           </div>
         </div>
       </footer>
