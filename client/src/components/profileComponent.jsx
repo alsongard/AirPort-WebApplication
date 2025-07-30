@@ -9,10 +9,11 @@ import {
 import clsx from "clsx";
 import axios from "axios";
 import SkyLuxSpinner from '../components/spinnerComponent';
-
+import {useNavigate} from "react-router-dom";
 
 export default function ProfileComponent(props)
 {
+  const navigate = useNavigate();
 
   // get items from localStorage:
   const token = localStorage.getItem("token");
@@ -174,6 +175,7 @@ export default function ProfileComponent(props)
     { id: 'book-flight', name: 'Book Flight', icon: Plane },
   ];
 
+
   const handleSave = () => {
     setIsEditing(false);
     console.log('Profile updated:', profileData);
@@ -269,12 +271,8 @@ export default function ProfileComponent(props)
                     {tabs.map((tab) => (
                       <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                          activeTab === tab.id
-                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                            : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white'
-                        }`}
+                        onClick={()=>{tab.id === "book-flight" ? navigate("/booking") : setActiveTab(tab.id)}}
+                        className={clsx(activeTab === tab.id ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg " : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white", "flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300")}
                       >
                         <tab.icon className="w-4 h-4" />
                         <span>{tab.name}</span>
