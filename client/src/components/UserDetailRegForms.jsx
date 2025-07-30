@@ -3,6 +3,7 @@ import axios from 'axios';
 import Select from 'react-select';
 import countryList from 'react-select-country-list';
 import {useNavigate} from 'react-router-dom';
+import { Link } from "react-router-dom";
 export default function AirportForms() {
   const navigate = useNavigate();
   const user_email = localStorage.getItem("user_email");
@@ -23,6 +24,7 @@ export default function AirportForms() {
     phone: '',
     dateBirth: '',
     emergencyContact: '',
+    emergencyContactName: '',
     userId: user_id
   });
 
@@ -81,7 +83,8 @@ export default function AirportForms() {
         userId: passengerData.userId,
         phone: passengerData.phone,
         dateBirth:passengerData.dateBirth ,
-        emergencyContact:passengerData.emergencyContact 
+        emergencyContact:passengerData.emergencyContact ,
+        emergencyContactName: passengerData.emergencyContactName
       });
       // console.log(`this is response`); // testing:working
       // console.log(res); // testing:working
@@ -104,6 +107,7 @@ export default function AirportForms() {
   };
 
   const [preferencesSuccessMsg, setPreferencesSuccessMsg] = useState("");
+  
   const handlePreferencesSubmit = async (event) => {
     event.preventDefault();
     console.log('Preferences Data:', preferencesData);
@@ -118,7 +122,10 @@ export default function AirportForms() {
       if (res.data.success)
       {
         setPreferencesSuccessMsg("User Preferences saved! ")
-        navigate("/profile");
+        // navigate("/profile"); 
+        setTimeout(()=>{
+          window.location.reload()
+        }, 8000)
       }
     }
     catch(err)
@@ -285,6 +292,21 @@ export default function AirportForms() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
+              <div>
+                <label htmlFor="emergencyContactName" className="block text-sm font-medium text-gray-900 mb-1">
+                  Emergency Contact Name *
+                </label>
+                <input
+                  type="tel"
+                  id="emergencyContactName"
+                  name="emergencyContactName"
+                  value={passengerData.emergencyContactName}
+                  onChange={handlePassengerChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter emergency contact"
+                />
+              </div>
 
               <div>
                 <label htmlFor="emergencyContact" className="block text-sm font-medium text-gray-900 mb-1">
@@ -420,7 +442,19 @@ export default function AirportForms() {
               />
             </div>
             {
-              preferencesSuccessMsg && (<p className="py-[8px] mt-[20px] bg-green-800 inline-block px-[15px] rounded-md text-center">User preferences saved!</p>)
+              preferencesSuccessMsg && 
+              (
+                <div className='flex flex-row items-center space-x-6'>
+                  <p className="py-[7px] mt-[20px] bg-green-800 inline-block px-[15px] rounded-md text-center">User preferences saved!</p>
+                  <button
+                    className="py-[7px] mt-[20px] bg-green-800 inline-block px-[15px] rounded-md text-center"
+                    onClick = {()=>{setTimeout(()=>window.location.reload(), 5000)}}
+                    // className="mt-4 px-[15px] py-[7px] bg-blue-700 text-white rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors"
+                  >
+                    Click to Move to Profile
+                  </button>
+                </div>
+              )
             }
           </form>
         </div>
