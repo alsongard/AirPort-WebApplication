@@ -25,16 +25,45 @@ const saltRounds = 10;
 
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
+
+
+const corsOption = {
+    origin: function (origin, callback){
+        if (process.env.NODE_ENV !== "production") // checks the environment at which t's running
+        {
+            // console.log(`[DEV] Allowing origin: ${origin}`)
+            return callback(null, true);
+        }
+        if (!origin)
+        {
+            return callback(null,true); // remember second argument: returns true(permit domain) or false(permit domain) 
+        }
+        const allowedDomains = [
+            "https://bugtrackerwebapp.vercel.app",
+            "http://localhost:5173"
+        ]
+        if (allowedDomains.includes(origin))// not equal the indexOf() method returns -1 if no value ns found in the array
+        {
+            return callback(null, true); // firstArgument: if we are expecting an error set this value as shown in else statemetn
+            // second argument: boolean value which indeicates if the origin is allowed(true) : on not allowed(false)
+        }
+        else
+        {
+            callback(new Error(`Origin: ${origin} not allowed by cors`));
+        }
+    },
+    methods:["POST", "GET", "PUT", "DELETE", "OPTIONS"],
+    credentials:true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOption));
+
+
+// home route
 app.get("/", (req,res)=>{
     res.status(200).send("<h1>Welcome</h1>");
 })
-
-corsOption = {
-    origin: "*"
-}
-app.use(cors(corsOption))
-
-
 
 // create user
 app.post("/register",async (req,res)=>{
@@ -115,10 +144,17 @@ app.post("/regUserDetail", async (req, res)=>{
         }
         // console.log(`firstName: ${firstName} \n middleName: ${middleName} \n lastName: ${lastName} \n age: ${age} \n passportNumber: ${passportNumber} \n userId: ${userId} \n phone: ${phone} \n dateBirth: ${dateBirth} \n emergencyContact: ${emergencyContact} \n nationality: ${nationality}`); // testing: working
 
-        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId, phone:phone,dateBirth: dateBirth, emergencyContact:emergencyContact, emergencyContactName:emergencyContactName ,  nationality:nationality });
+        // check if user exists
+        const foundUser = await UserDetail.findOne({userId:userId});// returns null if  no user found
+        if (foundUser)
+        {
+            return res.status(409).json({success:false, msg:"User details already exist for this user"})
+        }
+        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId, phone:phone, dateBirth:dateBirth, emergencyContact:emergencyContact, emergencyContactName:emergencyContactName ,  nationality:nationality });
         // console.log(userDetails);
         if (userDetails)
         {
+            console.log(`User Details Created Successfully`);
             return res.status(200).json({success:true, msg:"registered successfully", data:{first_name: userDetails.firstName, middle_name:userDetails.middleName, last_name:userDetails.lastName,user_id:userDetails.userId}})
         }
     }
@@ -135,21 +171,23 @@ app.get("/getUserDetail/:id", async (req,res)=>{
     const {id} = req.params;
     try
     {
-        const foundUser = await User.findOne({_id:id});
-        if (!foundUser)
-        {
-            return res.status(404).json({success:false, msg:`No user found with id: ${userId}`})
-        }
         if (!id)
         {
             return res.status(400).json({success:false, msg:"No id given "});
+        }
+        const foundUser = await User.findOne({_id:id});
+        if (!foundUser)
+        {
+            console.log(`No user found with the given ${id}`);
+            return res.status(404).json({success:false, msg:`No user found with id: ${id}`})
         }
         const foundUserDetail = await UserDetail.findOne({userId:id});
         // console.log(`foundUserDetail`)  // testing:working
         // console.log(foundUserDetail); // testing:working
         if (!foundUserDetail)
         {
-            return res.status(404).json({success:false, msg:`No user with the given Id: ${id}`});
+            console.log(`No user details found for the given id: ${id}`);
+            return res.status(404).json({success:false, msg:`No user details found for the given Id: ${id}`});
         }
         return res.status(200).json({success:true, msg:"user details retrieved", data:{first_name: foundUserDetail.firstName, middle_name:foundUserDetail.middleName, last_name:foundUserDetail.lastName,user_id:foundUserDetail.userId, phone:foundUserDetail.phone, passport:foundUserDetail.passportNumber, emergencyContact:foundUserDetail.emergencyContact, dateOfBirth:foundUserDetail.dateBirth}})
     }
@@ -192,7 +230,8 @@ app.post('/userpreferences', async (req, res)=>{
             newsletter: newsletter
         });
         // console.log(`new_user_preference`); // testing: working
-        console.log(new_user_preference);
+        console.log('new user preference created');
+        // console.log(new_user_preference);
         if (!new_user_preference) {
             return res.status(500).json({success:false, msg:"Server Error"});
         }
@@ -347,13 +386,13 @@ app.post("/booking", async (req,res)=>{
         {
             booking_created = await Booking.create({userId:userId, flightId:flightId, bookingStatus:bookingStatus, seatPreference:seatPreference, mealPreference:mealPreference, specialRequest:specialRequest});
             console.log(`booking_created : with emergencyContactName & emergencyContactPhone not set`); // testing: working
-            console.log(booking_created); // testing: working
+            // console.log(booking_created); // testing: working
         }
         else
             {
             booking_created = await Booking.create({userId:userId, flightId:flightId, bookingStatus:bookingStatus, seatPreference:seatPreference, mealPreference:mealPreference, specialRequest:specialRequest});
             console.log(`booking_created : with emergencyContactName & emergencyContactPhone set`); // testing: working
-            console.log(booking_created); // testing: working
+            // console.log(booking_created); // testing: working
         }
 
         if (!booking_created)
@@ -496,25 +535,5 @@ app.put("/flightDetails/:id", async (req,res)=>{
     }
 });
 
-const mongo_url = process.env.MONGO_URL;
-// console.log(mongo_url) working
 
-async function ConnectDB()
-{
-    try
-    {
-        await mongoose.connect(mongo_url);
-        console.log('Connected to MongoDB');
-    }
-    catch(err)
-    {
-        console.log(`Error: ${err}`);
-    }
-}
-
-
-const port = process.env.PORT_NUMBER;
-app.listen(port, ()=>{
-    console.log(`Server running on : http://localhost:${port}`);
-})
-ConnectDB();
+module.exports = app;
