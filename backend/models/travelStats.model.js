@@ -14,10 +14,6 @@ const UserTravellingStatsSchema = new mongoose.Schema({
         type: Number,
         default: 0 // in kilometers
     },
-    totalDuration: {
-        type: Number,
-        default: 0 // in hours
-    },
     lastTripDate: {
         type: Date
     },

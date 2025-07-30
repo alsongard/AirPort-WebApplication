@@ -4,8 +4,10 @@ const mongoose = require("mongoose");
 const FlightSchema = new mongoose.Schema(
     {
         flightName:{type:String, required:true},
-        departure:{type:String, required:true},
-        destination:{type:String, required:true},
+        departureCountry:{type:String, required:true},
+        departureCity:{type:String, required:true},
+        destinationCountry:{type:String, required:true},
+        destinationCity:{type:String, required:true},
         departureTime:{type:Date, required:true},
         arrivalTime:{type:Date, required:true},
         totalSeats:{type:Number, required:true},

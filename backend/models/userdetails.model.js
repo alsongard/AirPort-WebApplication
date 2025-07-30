@@ -6,7 +6,7 @@ const UserDetailSchema = new mongoose.Schema(
         middleName: {type:String, required:true, trim:true},
         lastName: {type:String, required:true, trim:true},
         age: {type:Number, required:true, trim:true},
-        nationality: {type:String, required:true, trim:true},
+        nationality: {type:Object, required:true, trim:true},
         passportNumber: {type:String, required:true, trim:true},
         userId: {ref:"User", type:mongoose.Schema.Types.ObjectId},
         phone: {type:Number, required:true},
