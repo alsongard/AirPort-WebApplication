@@ -10,8 +10,23 @@ import Footer from "./components/footer";
 import ProfilePage from "./pages/profilePage";
 import RandomPage from "./pages/lostRandomPage.jsx";
 import SkyLuxFlightBooking from "./pages/bookFlight.jsx";
+import {configureStore} from "@reduxjs/toolkit";
+import reducerer from "./store/reducer.jsx";
+import requireAuth from "./requireAuth.jsx";
+import {Provider} from "react-redux";
+import SetAuthHeader from "./utils/setAuthHeader.jsx";
+
 function App()
 {
+    const store = configureStore({reducer:reducerer});
+    const token = localStorage.getItem("token");
+    SetAuthHeader(token);
+    if (token)
+    {
+        store.dispatch({type:"ON_LOGGED_IN"});
+    }
+    const ProtectedProfilePage = requireAuth(ProfilePage);
+    const ProtectedBookingPage  = requireAuth(SkyLuxFlightBooking);
     const [darkTheme, setDarkTheme] = useState(false);
     let bg;
     useEffect(()=>{
@@ -27,20 +42,22 @@ function App()
     return (
         
         <div className={`${dark}`}>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<div><Header/><Outlet/><Footer/></div>}>
-                        <Route index element={<LandingPage/>}/>
-                        <Route  path="register" element={<RegLogin/>}/>
-                        <Route  path="about" element={<AboutPage/>}/>
-                        <Route  path="services" element={<ServicesPage/>}/>
-                        <Route  path="contact" element={<ContactPage/>}/>
-                        <Route path="profile" element={<ProfilePage/>}/>
-                        <Route path="booking" element={<SkyLuxFlightBooking/>}/>
-                        <Route path="*" element={<RandomPage/>}/>
-                    </Route>
-                </Routes>
-            </BrowserRouter>
+            <Provider store={store}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<div><Header/><Outlet/><Footer/></div>}>
+                            <Route index element={<LandingPage/>}/>
+                            <Route  path="register" element={<RegLogin/>}/>
+                            <Route  path="about" element={<AboutPage/>}/>
+                            <Route  path="services" element={<ServicesPage/>}/>
+                            <Route  path="contact" element={<ContactPage/>}/>
+                            <Route path="profile" element={<ProtectedProfilePage/>}/>
+                            <Route path="booking" element={<ProtectedBookingPage/>}/>
+                            <Route path="*" element={<RandomPage/>}/>
+                        </Route>
+                    </Routes>
+                </BrowserRouter>
+            </Provider>
         </div>
     )
 }
