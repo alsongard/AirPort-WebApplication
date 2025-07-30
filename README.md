@@ -1,12 +1,12 @@
 SkyLux Airport Booking System ✈️
 
-https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-
-https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white
-
-https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white
+![image](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![image](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![image](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
 
 A full-stack airport booking platform where users can search, compare, and book flights with a modern interface and secure authentication system.
+
+[Air-Port-Web-application](https://air-port-web-application.vercel.app/)   
+[Air-Port-API](https://airportwebapp-api.vercel.app)  
+
 Key Functionalities ✨
 User Features
 
@@ -84,7 +84,7 @@ Environment Variables 🔐
 
 Create a .env file in the server directory:
 env
-
+```
 MONGODB_URI = "your_mongodb_connection_string"
 PORT = 5000
 JWT_SECRET = "your_jwt_secret_key"
@@ -93,6 +93,12 @@ SMTP_HOST = "your_email_smtp_host"
 SMTP_PORT = 587
 SMTP_USER = "your_email@domain.com"
 SMTP_PASS = "your_email_password"
+```
+Create a .env file in client directory:
+env
+```
+VITE_API_URL="hosting_url"
+```
 
 Features Deep Dive 🧠
 Flight Booking System
@@ -133,11 +139,7 @@ Admin Dashboard
 
 API Endpoints
 text
-
-AUTH:
-POST    /api/auth/register     - User registration
-POST    /api/auth/login        - User login
-POST    /api/auth/forgot       - Password reset request
+```
 
 FLIGHTS:
 GET     /api/flights           - Get all flights (public)
@@ -158,9 +160,15 @@ GET     /api/admin/users       - Get all users (admin)
 GET     /api/admin/bookings    - Get all bookings (admin)
 GET     /api/admin/stats       - Get system statistics (admin)
 
+AUTH:UPCOMING FEATURES
+POST    /api/auth/register     - User registration
+POST    /api/auth/login        - User login
+POST    /api/auth/forgot       - Password reset request
+
+```
 Project Structure 📂
 text
-
+```
 airport-booking/
 ├── client/                   # Frontend
 │   ├── public/
@@ -192,7 +200,7 @@ airport-booking/
 │
 ├── .gitignore
 └── README.md
-
+```
 License 📄
 
 This project is licensed under the MIT License - see the LICENSE file for details.
