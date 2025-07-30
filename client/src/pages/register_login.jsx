@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import setAuthHeader from "../utils/setAuthHeader"
 function RegLogin(props) {
   const navigate = useNavigate()
+  const apiURL = import.meta.env.VITE_API_URL;
 
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -64,7 +65,7 @@ function RegLogin(props) {
       {
         // functioning done
         console.log(`Login: ${isLogin}`)
-        const res = await axios.post("http://localhost:5000/login", {
+        const res = await axios.post(`${apiURL}/login`, {
           UserEmail:formData.useremail,
           UserPassword:formData.password
         })
@@ -97,7 +98,7 @@ function RegLogin(props) {
       try
       {
         console.log(`Registration: ${isLogin}`)
-        const res = await axios.post("http://localhost:5000/register", {
+        const res = await axios.post(`${apiURL}/register`, {
           UserEmail:formData.useremail,
           UserPassword:formData.password
         })

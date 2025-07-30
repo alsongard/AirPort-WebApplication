@@ -2,12 +2,10 @@ import { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import countryList from 'react-select-country-list';
-import {useNavigate} from 'react-router-dom';
-import { Link } from "react-router-dom";
+
 export default function AirportForms() {
-  const navigate = useNavigate();
-  const user_email = localStorage.getItem("user_email");
   const user_id = localStorage.getItem("User_id");
+  const apiURL = import.meta.env.VITE_API_URL;
 
   // const options = useMemo(() => countryList().getData(), []);
   const options = useMemo(() => countryList().getData(), []);
@@ -73,7 +71,7 @@ export default function AirportForms() {
 
     try
     {
-      const res = await axios.post('http://localhost:5000/regUserDetail', {
+      const res = await axios.post(`${apiURL}/regUserDetail`, {
         firstName: passengerData.firstName,
         middleName: passengerData.middleName,
         lastName: passengerData.lastName,
@@ -114,7 +112,7 @@ export default function AirportForms() {
     // Handle preferences form submission logic here
     try
     {
-      const res = await axios.post("http://localhost:5000/userpreferences", preferencesData);
+      const res = await axios.post(`${apiURL}/userpreferences`, preferencesData);
       // console.log(`this is response`); //testing:working
       // console.log(res); //testing:working
       // console.log(`this is response.data`); //testing:working

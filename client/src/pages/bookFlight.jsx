@@ -27,6 +27,10 @@ export default function SkyLuxFlightBooking() {
     class: 'Economy'
   });
 
+  const apiURL= import.meta.env.VITE_API_URL;
+  // console.log(`this is apiURL: ${apiURL}`) // testing:working
+  // console.log(apiURL); // testing:working
+
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [userProfileData, setuserProfileData] = useState({});
@@ -38,7 +42,7 @@ export default function SkyLuxFlightBooking() {
     try
     {
       console.log(`user_id : ${user_id}`)
-      const res = await axios.get(`http://localhost:5000/getUserDetail/${user_id}`);
+      const res = await axios.get(`${apiURL}/getUserDetail/${user_id}`);
       // console.log(`This is response: ${res.status}`);
       // console.log(res);
   
@@ -121,7 +125,7 @@ export default function SkyLuxFlightBooking() {
     });
     try
     {
-      const response = await axios.post("http://localhost:5000/booking", {
+      const response = await axios.post(`${apiURL}/booking`, {
         userId:user_id,
         flightId: selectedFlight._id,
         bookingStatus: 'confirmed',
@@ -186,7 +190,7 @@ export default function SkyLuxFlightBooking() {
   const [flights, setFlights] = useState([]);
   const getFlights = async () => {
     try { 
-      const response = await axios.get("http://localhost:5000/flightDetails");
+      const response = await axios.get(`${apiURL}/flightDetails`);
       if (response.data.success)
         {
          console.log(response.data.data);
@@ -205,7 +209,7 @@ export default function SkyLuxFlightBooking() {
     // Perform search flight logic here
     try
     {
-      const response = await axios.post("http://localhost:5000/flightSearch", {
+      const response = await axios.post(`${apiURL}/flightSearch`, {
         departureCity: searchFilters.from,
         destinationCity: searchFilters.to,
         departureDate: searchFilters.departDate,

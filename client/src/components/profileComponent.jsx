@@ -10,11 +10,12 @@ import clsx from "clsx";
 import axios from "axios";
 import SkyLuxSpinner from '../components/spinnerComponent';
 import {useNavigate} from "react-router-dom";
-
 export default function ProfileComponent(props)
 {
   const navigate = useNavigate();
 
+  const apiURL = import.meta.env.VITE_API_URL
+  
   // get items from localStorage:
   const user_email = localStorage.getItem("user_email");
   const user_id = localStorage.getItem("User_id");
@@ -36,7 +37,7 @@ export default function ProfileComponent(props)
     try
     {
       console.log(`user_id : ${user_id}`)
-      const res = await axios.get(`http://localhost:5000/getUserDetail/${user_id}`);
+      const res = await axios.get(`${apiURL}/getUserDetail/${user_id}`);
       // console.log(`This is response: ${res.status}`);
       // console.log(res);
   
@@ -57,7 +58,7 @@ export default function ProfileComponent(props)
   const getTravelStats = async ()=>{
     try
     {
-      const res = await axios.get(`http://localhost:5000/travellingStats/${user_id}`);
+      const res = await axios.get(`${apiURL}/travellingStats/${user_id}`);
       // console.log(res);
       if (res.data.success)
       {
@@ -72,7 +73,7 @@ export default function ProfileComponent(props)
   const getUserPreference = async ()=>{
     try
     {
-      const res = await axios.get(`http://localhost:5000/userpreferences/${user_id}`);
+      const res = await axios.get(`${apiURL}/userpreferences/${user_id}`);
       // console.log(res); // testing:working
       if (res.data.success)
       {
@@ -87,7 +88,7 @@ export default function ProfileComponent(props)
   const getBooking = async ()=>{
     try
     {
-      const res = await axios.get(`http://localhost:5000/booking/${user_id}`);
+      const res = await axios.get(`${apiURL}/booking/${user_id}`);
       // console.log(`this is res on getBooking`); // testing:working
       // console.log(res); // testing:working
       console.log(`this is res.data on getBooking`); // testing:working
@@ -349,7 +350,7 @@ export default function ProfileComponent(props)
                               ) : (
                                 <div className="px-4 py-3 bg-white/5 rounded-xl text-white flex items-center">
                                   <Phone className="w-4 h-4 mr-2 text-blue-400" />
-                                   + {userProfileData.phone}
+                                   {userProfileData.phone}
                                 </div>
                               )}
                             </div>

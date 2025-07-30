@@ -13,9 +13,10 @@ import AirportForms from '../components/UserDetailRegForms';
 import SkyLuxSpinner from '../components/spinnerComponent';
 export default function ProfilePage() {
 
+  const apiURL = import.meta.env.VITE_API_URL;
   // get items from localStorage:
-  const token = localStorage.getItem("token");
-  const user_email = localStorage.getItem("user_email");
+  // const token = localStorage.getItem("token");
+  // const user_email = localStorage.getItem("user_email");
   const user_id = localStorage.getItem("User_id");
 
   const [isloading, setIsLoading] = useState(true);
@@ -25,7 +26,7 @@ export default function ProfilePage() {
   const getUserDetails = async ()=>{
     try
     {
-      const res = await axios.get(`http://localhost:5000/getUserDetail/${user_id}`);
+      const res = await axios.get(`${apiURL}/getUserDetail/${user_id}`);
       // console.log(`This is response: ${res.status}`);
       // console.log(res);
   
