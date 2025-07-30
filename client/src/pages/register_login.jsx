@@ -94,7 +94,6 @@ function RegLogin(props) {
     }
     if (!isLogin)
     {
-      
       try
       {
         console.log(`Registration: ${isLogin}`)
@@ -107,15 +106,15 @@ function RegLogin(props) {
         if (res.data.success)
         {
           setRegSuccess("Registered Successfully! Now Login");
-          setTimeOut(()=>{
-            setRegSuccess("")
-          }, 8000)
+          setTimeout(() => {
+            setRegSuccess("");
+          }, 8000);
         }
       }
       catch(err)
       {
         console.log(`Error : ${err}`);
-        alert(`Error ${err}`)
+        // alert(`Error ${err}`)
       }
     }
   };
