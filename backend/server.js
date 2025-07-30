@@ -15,6 +15,7 @@ const Flight = require("./models/flightdetails.model");
 const Booking = require("./models/booking.model");
 const PayMent = require("./models/paymentdetails.model");
 const UserPreference = require("./models/userPreferences.model");
+const UserTravellingStats = require("./models/travelStats.model");
 
 // configurations
 const saltRounds = 10;
@@ -105,16 +106,16 @@ app.post("/login", async (req,res)=>{
 
 // registeruserDetails: form 
 app.post("/regUserDetail", async (req, res)=>{
-    const {firstName, middleName, lastName, age, passportNumber, userId, phone, dateBirth,emergencyContact } = req.body;
+    const {firstName, middleName, lastName, age, passportNumber, userId, phone, dateBirth,emergencyContact, nationality } = req.body;
     try
     {
-        if (!firstName || !middleName || !lastName || !age || !passportNumber || !userId || !phone || !dateBirth || !emergencyContact)
+        if (!firstName || !middleName || !lastName || !age || !passportNumber || !userId || !phone || !dateBirth || !emergencyContact || !nationality)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"})
         }
-        console.log(`firstName: ${firstName} \n middleName: ${middleName} \n lastName: ${lastName} \n age: ${age} \n passportNumber: ${passportNumber} \n userId: ${userId} \n phone: ${phone} \n dateBirth: ${dateBirth} \n emergencyContact: ${emergencyContact}`);
+        // console.log(`firstName: ${firstName} \n middleName: ${middleName} \n lastName: ${lastName} \n age: ${age} \n passportNumber: ${passportNumber} \n userId: ${userId} \n phone: ${phone} \n dateBirth: ${dateBirth} \n emergencyContact: ${emergencyContact} \n nationality: ${nationality}`); // testing: working
 
-        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId, phone:phone,dateBirth: dateBirth, emergencyContact:emergencyContact });
+        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId, phone:phone,dateBirth: dateBirth, emergencyContact:emergencyContact, nationality:nationality });
         // console.log(userDetails);
         if (userDetails)
         {
@@ -134,16 +135,23 @@ app.get("/getUserDetail/:id", async (req,res)=>{
     const {id} = req.params;
     try
     {
+        const foundUser = await User.findOne({_id:id});
+        if (!foundUser)
+        {
+            return res.status(404).json({success:false, msg:`No user found with id: ${userId}`})
+        }
         if (!id)
         {
             return res.status(400).json({success:false, msg:"No id given "});
         }
         const foundUserDetail = await UserDetail.findOne({userId:id});
+        // console.log(`foundUserDetail`)  // testing:working
+        // console.log(foundUserDetail); // testing:working
         if (!foundUserDetail)
         {
             return res.status(404).json({success:false, msg:`No user with the given Id: ${id}`});
         }
-        return res.status(200).json({success:true, msg:"user details retrieved", data:{first_name: foundUserDetail.firstName, middle_name:foundUserDetail.middleName, last_name:foundUserDetail.lastName,user_id:foundUserDetail.userId}})
+        return res.status(200).json({success:true, msg:"user details retrieved", data:{first_name: foundUserDetail.firstName, middle_name:foundUserDetail.middleName, last_name:foundUserDetail.lastName,user_id:foundUserDetail.userId, phone:foundUserDetail.phone, passport:foundUserDetail.passportNumber, emergencyContact:foundUserDetail.emergencyContact}})
     }
     catch(err)
     {
@@ -169,19 +177,26 @@ app.post('/userpreferences', async (req, res)=>{
         {
             return res.status(404).json({success:false, msg:`No user found with id: ${userId}`})
         }
-        const userPreference = await UserPreference.create({
-            userId,
-            seatPreference,
-            mealPreference,
-            classPreference,
-            notifications,
-            newsletter
+        // check if userId already has preference
+        const userCheckPreference = await UserPreference.findOne({userId:userId});
+        if (userCheckPreference)
+        {
+            return res.status(409).json({success:false, msg:'User preference already set'})
+        }
+        const new_user_preference = await UserPreference.create({
+            userId: userId,
+            seatPreference: seatPreference,
+            mealPreference: mealPreference,
+            classPreference: classPreference,
+            notifications: notifications,
+            newsletter: newsletter
         });
-        console.log(userPreference);
-        if (!userPreference) {
+        // console.log(`new_user_preference`); // testing: working
+        console.log(new_user_preference);
+        if (!new_user_preference) {
             return res.status(500).json({success:false, msg:"Server Error"});
         }
-        return res.status(200).json({success:true, msg:"User preferences saved", data:userPreference});
+        return res.status(200).json({success:true, msg:"User preferences saved", data:new_user_preference});
     }
     catch(err)
     {
@@ -198,11 +213,14 @@ app.get("/userpreferences/:userId", async (req,res)=>{
     try
     {
         const foundUserPreference = await UserPreference.findOne({userId:userId});
+        // console.log(`FoundUserPreference`) //testing:working
+        // console.log(foundUserPreference); //testing:working
+
         if (!foundUserPreference)
         {
             return res.status(404).json({success:false, msg:`No user preferences found for user with id: ${userId}`});
         }
-        return res.status(200).json({success:true, data:foundUserPreference});
+        return res.status(200).json({success:true, msg: "User preference retrieved", data:{seatPreference: foundUserPreference.seatPreference, mealPreference: foundUserPreference.mealPreference, classPreference: foundUserPreference.classPreference, notifications: foundUserPreference.notifications, newsletter: foundUserPreference.newsletter}});
     }
     catch(err)
     {
@@ -211,6 +229,61 @@ app.get("/userpreferences/:userId", async (req,res)=>{
     }
 
 })
+
+app.post("/travellingStat/:id", async (req, res)=>{
+    const {id} = req.params;
+    const {trips, distance, lastTripDate, countriesNum} = req.body;
+    // console.log(req.body);
+    //console.log(`id: ${id} \n trips: ${trips} \n distance: ${distance} \n lastTripDate: ${lastTripDate} \n countriesNum: ${countriesNum}`); // testing:working
+    if (!id)
+    {
+        return res.status(401).json({success:false, msg:"No id givne"});
+    }
+    if (!trips || !distance || !lastTripDate || !countriesNum)
+    {
+        return res.status(404).json({success:false, msg:"Invalid Input"})
+    }
+    try
+    {
+        const new_travel_stat = await UserTravellingStats.create({userId:id, totalTrips:trips, totalDistance:distance, lastTripDate:lastTripDate, countriesVisited:countriesNum});
+        // console.log(new_travel_stat); // testing:working
+        if (new_travel_stat)
+        {
+            return res.status(200).json({success:true, msg:"User created successfully", data:{totalTrips:new_travel_stat.totalTrips, totalDistance:new_travel_stat.totalDistance, lastTripDate:new_travel_stat.lastTripDate, countriesVisited:new_travel_stat.countriesVisited}});
+        }
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:"Internal Server Error"});
+    }
+})
+
+app.get("/travellingStats/:id", async (req, res)=>{
+    const {id} = req.params;
+    if (!id)
+    {
+        return res.status(401).json({success:false, msg:"No id given"});
+    }
+    try
+    {
+        const travel_stat = await UserTravellingStats.findOne({userId:id})
+        console.log(`travel_stat`); // testing: working
+        console.log(travel_stat); // testing: working
+        if (!travel_stat)
+        {
+            return res.status(404).json({success:false, msg:`No data for the given id: ${id}`});
+        }
+        return res.status(200).json({success:true, msg:"User travel Stat found", data:{totalTrips:travel_stat.totalTrips, totalDistance:travel_stat.totalDistance, lastTripDate:travel_stat.lastTripDate, countriesVisited:travel_stat.countriesVisited}});
+
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:"Internal Server Error"});
+    }
+})
+
 
 app.get("/flightDetails", async (req, res)=>{
     try
@@ -233,21 +306,21 @@ app.get("/flightDetails", async (req, res)=>{
 
 
 app.post("/booking", async (req,res)=>{
-    const {userId, flightId} = req.body;
+    const {userId, flightId, bookingStatus, seatClass} = req.body;
     try
     {
-        if (!userId || !flightId)
+        if (!userId || !flightId || !bookingStatus || !seatClass)
         {
             return res.status(400).json({success:false, msg:"Invalid INput"});
         }
 
-        const booking_created = await Booking.create({userId:userId, flightId:flightId });
-
+        const booking_created = await Booking.create({userId:userId, flightId:flightId, bookingStatus:bookingStatus, seatClass:seatClass});
+        console.log(booking_created); // testing:
         if (!booking_created)
         {
             return res.status(500).json({success:false, msg:"Server Error"})
         }
-        return res.status(200).json({success:true, msg:"Flight created", data:booking_created});
+        return res.status(200).json({success:true, msg:"Booking reserved", data:booking_created});
     }
     catch(err)
     {
@@ -257,26 +330,34 @@ app.post("/booking", async (req,res)=>{
 })
 
 
-app.get("/booking", async (req,res)=>{
-    const {userId} = req.body;
-    if (!userId)
+app.get("/booking/:id", async (req,res)=>{
+    const {id} = req.params;
+    if (!id)
     {
-        return res.status(400).json({success:false, msg:"Invalid Paramenter"});
+        return res.status(400).json({success:false, msg:"Invalid Parameter"});
+    }
+    try
+    {
+        // check if such user exist
+        const foundUser = await User.findOne({_id:id});
+        if (!foundUser)
+        {
+            return res.status(404).json({success:false, msg:`No user found with id: ${id}`})
+        }
+        const foundBooking = await Booking.find({userId:id}).populate("flightId",  "flightName  departureCountry departureCity  destinationCountry  destinationCity  departureTime  arrivalTime  price");
+        console.log(`foundBooking`); // testing: working
+        console.log(foundBooking); // testing: working
+        if (foundBooking)
+        {
+            return res.status(200).json({success:true, data:foundBooking}); 
+        }
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:"Internal Server Error"});
     }
 
-    // check if such user exist
-    const foundUser = await User.findOne({_id:userId});
-    if (!foundUser)
-    {
-        return res.status(404).json({success:false, msg:`No user found with id: ${userId}`})
-    }
-    const foundBooking = await Booking.find({userId:userId}).populate("flightId",  "flightName  departure  destination  departureTime  arrivalTime  price");
-    // flightName,  departure, destination, departureTime,  arrivalTime, price
-    console.log(foundBooking);
-    if (foundBooking)
-    {
-        return res.status(200).json({success:true, data:foundBooking}); 
-    }
 })
 
 app.post("/payment", async (req,res)=>{
@@ -327,19 +408,19 @@ app.get("/payment", async (req,res)=>{
 //ADMIN FUNCIONALITIES
 // create flightDetails
 app.post("/flightDetails", async (req,res)=>{
-    const {flightName, departure ,destination, departureTime, arrivalTime, totalSeats, price} = req.body;
+    const {flightName, departureCountry, departureCity ,destinationCountry, destinationCity, departureTime, arrivalTime, totalSeats, price} = req.body;
     try
     {
-        if (!flightName || !departure  || !destination || !departureTime || !arrivalTime || !totalSeats || !price)
+        if (!flightName || !departureCountry || !departureCity || !destinationCountry  || !destinationCity || !departureTime || !arrivalTime || !totalSeats || !price)
         {
             return res.status(400).json({success:false, msg:"Invalid input"});
         }
-        const flight_created = await Flight.create({flightName:flightName, departure:departure ,destination:destination, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price})
+        const flight_created = await Flight.create({flightName:flightName, departureCountry:departureCountry, departureCity:departureCity, destinationCountry:destinationCountry, destinationCity:destinationCity, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price})
         if (!flight_created)
         {
             return res.status(500).json({success:false, msg:"Error creating flight details"});
         }
-        return res.status(200).json({success:true, msg:"Flight details created successfully", data:{flightName:flight_created.flightName, departure:flight_created.departure, destination:flight_created.destination, departureTime:flight_created.departureTime, arrivalTime:flight_created.arrivalTime, totalSeats:flight_created.totalSeats, price:flight_created.price}});
+        return res.status(200).json({success:true, msg:"Flight details created successfully", data:{flightName:flight_created.flightName, departureCountry:flight_created.departureCountry, departureCity:flight_created.departureCity, destinationCountry:flight_created.destinationCountry, destinationCity:flight_created.destinationCity, departureTime:flight_created.departureTime, arrivalTime:flight_created.arrivalTime, totalSeats:flight_created.totalSeats, price:flight_created.price}});
     }
     catch(err)
     {
@@ -367,6 +448,6 @@ async function ConnectDB()
 
 const port = process.env.PORT_NUMBER;
 app.listen(port, ()=>{
-    console.log(`Listening on port: ${port}`);
+    console.log(`Server running on : http://localhost:${port}`);
 })
 ConnectDB();
