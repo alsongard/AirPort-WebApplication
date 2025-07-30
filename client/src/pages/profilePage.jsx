@@ -17,6 +17,7 @@ export default function ProfilePage() {
   const token = localStorage.getItem("token");
   const user_email = localStorage.getItem("user_email");
   const user_id = localStorage.getItem("User_id");
+
   const [isloading, setIsLoading] = useState(true);
 
   const [displayRegForm, setDisplayRegForm] = useState(false);
@@ -24,17 +25,17 @@ export default function ProfilePage() {
   const getUserDetails = async ()=>{
     try
     {
-      const res = await axios.get("http://localhost:5000/getUserDetail/688596970090340009d242f8");
-      console.log(`This is response: ${res.status}`);
-      console.log(res);
+      const res = await axios.get(`http://localhost:5000/getUserDetail/${user_id}`);
+      // console.log(`This is response: ${res.status}`);
+      // console.log(res);
   
       if (res.data.success)
       {
-        console.log(res.data.data); // success,otherproperties
+        // console.log(res.data.data); // success,otherproperties
         setDisplayRegForm(false);
         setTimeout(()=>{
           setIsLoading(false);
-        },5000)
+        },10000)
       }
 
     }
@@ -42,7 +43,7 @@ export default function ProfilePage() {
     {
       setTimeout(()=>{
         setIsLoading(false);
-        },5000)
+        },10000)
       setDisplayRegForm(true);
       console.log(`Error: ${err}`);
     }
@@ -64,7 +65,7 @@ export default function ProfilePage() {
         )
         : 
         (
-          <ProfileComponent/>
+          <ProfileComponent />
         )
       }
     </div>

@@ -1,6 +1,6 @@
 export default function SkyLuxSpinner() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900  to-indigo-900 flex items-center justify-center">
       <div className="flex flex-col items-center space-y-8">
         {/* Loading Spinner */}
         <div className="relative">
@@ -17,10 +17,10 @@ export default function SkyLuxSpinner() {
 
         {/* SkyLux Text */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2 tracking-wide">
-            Sky<span className="text-blue-600">Lux</span>
+          <h1 className="text-4xl font-bold text-white mb-2 tracking-wide">
+            Sky<span className="text-white">Lux</span>
           </h1>
-          <p className="text-gray-600 text-lg animate-pulse">
+          <p className="text-white text-lg animate-pulse">
             Loading your flight experience...
           </p>
         </div>

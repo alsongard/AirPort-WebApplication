@@ -2,8 +2,9 @@ import { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
 import countryList from 'react-select-country-list';
-
+import {useNavigate} from 'react-router-dom';
 export default function AirportForms() {
+  const navigate = useNavigate();
   const user_email = localStorage.getItem("user_email");
   const user_id = localStorage.getItem("User_id");
 
@@ -45,7 +46,7 @@ export default function AirportForms() {
   };
   const handleSelected = (selected)=>{
     const {value, label} = selected;
-    console.log(`value: ${value} and label: ${label}`);
+    // console.log(`value: ${value} and label: ${label}`);
     setPassengerData((prevData)=>{
       return {
         ...prevData,
@@ -76,15 +77,16 @@ export default function AirportForms() {
         lastName: passengerData.lastName,
         age: passengerData.age,
         passportNumber: passengerData.passportNumber,
+        nationality: passengerData.nationality,
         userId: passengerData.userId,
         phone: passengerData.phone,
         dateBirth:passengerData.dateBirth ,
         emergencyContact:passengerData.emergencyContact 
       });
-      console.log(`this is response`);
-      console.log(res);
-      console.log(`this is response.data`);
-      console.log(res.data);
+      // console.log(`this is response`); // testing:working
+      // console.log(res); // testing:working
+      // console.log(`this is response.data`); // testing:working
+      // console.log(res.data); // testing:working
       if (res.data.success)
       {
         setPassengerSuccess("User Details have been added successfully");
@@ -96,7 +98,7 @@ export default function AirportForms() {
     catch(err)
     {
       console.log(`error: ${err}`);
-      alert(`Error: ${err}`);
+      // alert(`Error: ${err}`);
     }
     // Handle passenger form submission logic here
   };
@@ -116,6 +118,7 @@ export default function AirportForms() {
       if (res.data.success)
       {
         setPreferencesSuccessMsg("User Preferences saved! ")
+        navigate("/profile");
       }
     }
     catch(err)
@@ -123,10 +126,10 @@ export default function AirportForms() {
       console.log(`Error: ${err}`);
     }
   };
-  useEffect(()=>{
-    console.log(passengerData);
+  // useEffect(()=>{
+  //   console.log(passengerData);
 
-  }, [passengerData])
+  // }, [passengerData])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-8 px-4">
