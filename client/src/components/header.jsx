@@ -27,6 +27,9 @@ function Header(){
                         <NavLink to="/profile"className={({isActive})=>{return isActive ? "text-black" : "text-gray-600 hover:text-blue-600 transition"}}>Profile</NavLink>
                     </li>
                     <li>
+                        <NavLink to="/booking"className={({isActive})=>{return isActive ? "text-black" : "text-gray-600 hover:text-blue-600 transition"}}>Booking</NavLink>
+                    </li>
+                    <li>
                         <NavLink to="/contact"className={({isActive})=>{return isActive ? "text-black" : "text-gray-600 hover:text-blue-600 transition"}}>Contact</NavLink>
                     </li>
                 </ul>
