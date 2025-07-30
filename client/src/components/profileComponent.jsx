@@ -16,7 +16,6 @@ export default function ProfileComponent(props)
   const navigate = useNavigate();
 
   // get items from localStorage:
-  const token = localStorage.getItem("token");
   const user_email = localStorage.getItem("user_email");
   const user_id = localStorage.getItem("User_id");
   // console.log(`user_email: ${user_email}`); // testing:working
@@ -239,7 +238,7 @@ export default function ProfileComponent(props)
                           </div>
                           <div className="flex items-center space-x-4 mt-2 text-sm text-blue-300">
                             <span>{userTravelStatData.trips} flights</span>
-                            <span>{userTravelStatData.distance.toLocaleString()} miles</span>
+                            <span>{userTravelStatData.totalDistance.toLocaleString()} miles</span>
                             <span>{userTravelStatData.countriesNum} countries</span>
                           </div>
                         </div>
@@ -433,7 +432,7 @@ export default function ProfileComponent(props)
                               </div>
                               <div className="flex items-center justify-between">
                                 <span className="text-blue-200">Miles Flown</span>
-                                <span className="text-2xl font-bold text-white">{userTravelStatData.distance.toLocaleString()}</span>
+                                <span className="text-2xl font-bold text-white">{userTravelStatData.totalDistance.toLocaleString()}</span>
                               </div>
                               <div className="flex items-center justify-between">
                                 <span className="text-blue-200">Countries</span>
