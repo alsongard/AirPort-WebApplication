@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState ,useEffect } from 'react';
 import { 
   Plane, 
   Clock, 
@@ -11,8 +11,11 @@ import {
   Star,
   Wifi,
   Coffee,
-  Headphones
+  Headphones,
+  CircleX
 } from 'lucide-react';
+
+import axios from "axios";
 
 export default function SkyLuxFlightBooking() {
   const [searchFilters, setSearchFilters] = useState({
@@ -26,14 +29,45 @@ export default function SkyLuxFlightBooking() {
 
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
+  const [userProfileData, setuserProfileData] = useState({});
 
-  const [bookingData, setBookingData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    passportNumber: '',
-    dateOfBirth: '',
+  const user_email = localStorage.getItem("user_email");
+  const user_id = localStorage.getItem("User_id");
+  
+  const getUserDetails = async ()=>{
+    try
+    {
+      console.log(`user_id : ${user_id}`)
+      const res = await axios.get(`http://localhost:5000/getUserDetail/${user_id}`);
+      // console.log(`This is response: ${res.status}`);
+      // console.log(res);
+  
+      if (res.data.success)
+      {
+        // console.log(res.data.data); // success,otherproperties
+        setuserProfileData(res.data.data);
+      }
+
+    }
+    catch(err)
+    {
+      console.log(`Error: ${err}`);
+    }
+  };
+  useEffect(() => {
+    getUserDetails();
+  },[])
+  
+  useEffect(() => {
+    console.log(`userProfileData: `);
+    console.log(userProfileData);
+    setBookingData({
+    firstName: userProfileData.first_name || '',
+    lastName: userProfileData.last_name || '',
+    email: user_email || '',
+    phone: userProfileData.phone || '',
+    passportNumber: userProfileData.passport || '',
+    dateOfBirth: new Date(userProfileData.dateOfBirth).toLocaleDateString() || '',
     seatPreference: '',
     mealPreference: '',
     specialRequests: '',
@@ -41,73 +75,22 @@ export default function SkyLuxFlightBooking() {
     emergencyContactPhone: ''
   });
 
-  // Sample flight data
-  const availableFlights = [
-    {
-      id: 'SL001',
-      airline: 'SkyLux Airways',
-      from: 'New York (NYC)',
-      to: 'Los Angeles (LAX)',
-      departTime: '08:30',
-      arriveTime: '11:45',
-      duration: '5h 15m',
-      date: '2025-08-15',
-      price: 450,
-      class: 'Economy',
-      availableSeats: 45,
-      aircraft: 'Boeing 737-800',
-      amenities: ['Wifi', 'Meals', 'Entertainment'],
-      rating: 4.5
-    },
-    {
-      id: 'SL002',
-      airline: 'SkyLux Airways',
-      from: 'New York (NYC)',
-      to: 'Los Angeles (LAX)',
-      departTime: '14:20',
-      arriveTime: '17:35',
-      duration: '5h 15m',
-      date: '2025-08-15',
-      price: 380,
-      class: 'Economy',
-      availableSeats: 32,
-      aircraft: 'Airbus A320',
-      amenities: ['Wifi', 'Snacks', 'Entertainment'],
-      rating: 4.2
-    },
-    {
-      id: 'SL003',
-      airline: 'SkyLux Premium',
-      from: 'New York (NYC)',
-      to: 'Los Angeles (LAX)',
-      departTime: '19:15',
-      arriveTime: '22:30',
-      duration: '5h 15m',
-      date: '2025-08-15',
-      price: 750,
-      class: 'Business',
-      availableSeats: 12,
-      aircraft: 'Boeing 787-9',
-      amenities: ['Wifi', 'Premium Meals', 'Lie-flat Seats', 'Priority Boarding'],
-      rating: 4.8
-    },
-    {
-      id: 'SL004',
-      airline: 'SkyLux Airways',
-      from: 'New York (NYC)',
-      to: 'Los Angeles (LAX)',
-      departTime: '06:00',
-      arriveTime: '09:15',
-      duration: '5h 15m',
-      date: '2025-08-15',
-      price: 420,
-      class: 'Economy',
-      availableSeats: 28,
-      aircraft: 'Boeing 737-900',
-      amenities: ['Wifi', 'Breakfast', 'Entertainment'],
-      rating: 4.3
-    }
-  ];
+  },[userProfileData])
+  
+  const [bookingData, setBookingData] = useState({
+    firstName: userProfileData.first_name || '',
+    lastName: userProfileData.last_name || '',
+    email: user_email || '',
+    phone: userProfileData.phone || '',
+    passportNumber: userProfileData.passport || '',
+    dateOfBirth: userProfileData.dateOfBirth || '',
+    seatClass: 'Economy',
+    seatPreference: '',
+    mealPreference: '',
+    specialRequests: '',
+    emergencyContactName: userProfileData.emergencyContactName || '',
+    emergencyContactPhone: userProfileData.emergencyContact ||  ''
+  });
 
   const handleSearchChange = (event) => {
     const { name, value } = event.target;
@@ -130,29 +113,56 @@ export default function SkyLuxFlightBooking() {
     setShowBookingForm(true);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit =  async (event) => {
     event.preventDefault();
     console.log('Booking Data:', {
       flight: selectedFlight,
       passenger: bookingData
     });
-    alert('Flight booked successfully! Confirmation details will be sent to your email.');
+    try
+    {
+      const response = await axios.post("http://localhost:5000/booking", {
+        userId:user_id,
+        flightId: selectedFlight._id,
+        bookingStatus: 'confirmed',
+        seatPreference: bookingData.seatPreference,
+        mealPreference: bookingData.mealPreference,
+        specialRequest: bookingData.specialRequests,
+        emergencyContactName: bookingData.emergencyContactName,
+        emergencyContactPhone: bookingData.emergencyContactPhone
+      });
+      console.log(response.data);
+      if (response.data.success)
+      {
+        setBookingSuccessMsg("Flights booked successfully!");
+        setTimeout(()=>{
+          setBookingSuccessMsg("");
+        }, 10000)
+      }
+      // alert('Flight booked successfully! Confirmation details will be sent to your email.');
+    }
+    catch(err)
+    {
+      console.error('Error booking flight:', err);
+      // alert('Failed to book flight. Please try again later.');
+    }
+
     // Reset form
-    setBookingData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      passportNumber: '',
-      dateOfBirth: '',
-      seatPreference: '',
-      mealPreference: '',
-      specialRequests: '',
-      emergencyContactName: '',
-      emergencyContactPhone: ''
-    });
-    setShowBookingForm(false);
-    setSelectedFlight(null);
+    // setBookingData({
+    //   firstName: '',
+    //   lastName: '',
+    //   email: '',
+    //   phone: '',
+    //   passportNumber: '',
+    //   dateOfBirth: '',
+    //   seatPreference: '',
+    //   mealPreference: '',
+    //   specialRequests: '',
+    //   emergencyContactName: '',
+    //   emergencyContactPhone: ''
+    // });
+    // setShowBookingForm(false);
+    // setSelectedFlight(null);
   };
 
   const renderAmenityIcon = (amenity) => {
@@ -171,23 +181,88 @@ export default function SkyLuxFlightBooking() {
     }
   };
 
+   
+
+  const [flights, setFlights] = useState([]);
+  const getFlights = async () => {
+    try { 
+      const response = await axios.get("http://localhost:5000/flightDetails");
+      if (response.data.success)
+        {
+         console.log(response.data.data);
+          setFlights(response.data.data);
+        }
+    } catch (error) {
+      console.error('Error fetching flights:', error);
+    }
+  };
+
+  const [noFlightMsg, setNoFlightMsg] = useState("");// message when search is empty || no flights found
+  const [bookingSuccessMsg, setBookingSuccessMsg] = useState(""); // message when booking is successful
+  const handleSearchFlight = async (event) => {
+    event.preventDefault();
+    console.log(searchFilters);
+    // Perform search flight logic here
+    try
+    {
+      const response = await axios.post("http://localhost:5000/flightSearch", {
+        departureCity: searchFilters.from,
+        destinationCity: searchFilters.to,
+        departureDate: searchFilters.departDate,
+        returnDate: searchFilters.returnDate,
+      });
+
+      // console.log(`this is response`)
+      // console.log(response);
+      // console.log(`this is response.data`);
+      // console.log(response.data);
+      // console.log(response.data.success); 
+      if (response.data.success)
+      {
+        setFlights(response.data.data);
+      }
+      if (response.status === 200 && !response.data.success) {
+        // Update state with available flights
+        console.log(`No flights found for the given search criteria`);
+        setNoFlightMsg("No flights for the given search");
+      }
+    }
+    catch (error) {
+      console.error('Error searching flights:', error);
+      // alert('Failed to search flights. Please try again later.');
+    }
+  };
+
+  // the data handler/initial fetch for data
+  function getData(){
+    getFlights();
+    setNoFlightMsg("")
+  }
+
+
+  // Initial fetch for flights and user details
+  useEffect(() => {
+    getFlights();
+
+  },[])
+  
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <div className=" shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-white">
             Book Your <span className="text-blue-600">SkyLux</span> Flight
           </h1>
-          <p className="text-gray-600 mt-2">Find and book the perfect flight for your journey</p>
+          <p className="text-blue-600 mt-2">Find and book the perfect flight for your journey</p>
         </div>
-      </header>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {!showBookingForm ? (
           <>
             {/* Search Filters */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <form onSubmit={handleSearchFlight} className="bg-white rounded-lg shadow-md p-6 mb-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Search Flights</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
@@ -199,8 +274,8 @@ export default function SkyLuxFlightBooking() {
                       name="from"
                       value={searchFilters.from}
                       onChange={handleSearchChange}
-                      placeholder="New York"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Departure City"
+                      className="w-full placeholder:text-gray-300 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -208,14 +283,14 @@ export default function SkyLuxFlightBooking() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 " />
                     <input
                       type="text"
                       name="to"
                       value={searchFilters.to}
                       onChange={handleSearchChange}
-                      placeholder="Los Angeles"
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Destination City"
+                      className="w-full placeholder:text-gray-300 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -228,6 +303,20 @@ export default function SkyLuxFlightBooking() {
                       type="date"
                       name="departDate"
                       value={searchFilters.departDate}
+                      onChange={handleSearchChange}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Return Date</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="date"
+                      name="returnDate"
+                      value={searchFilters.returnDate}
                       onChange={handleSearchChange}
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
@@ -253,26 +342,39 @@ export default function SkyLuxFlightBooking() {
                 </div>
               </div>
 
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex space-x-1 justify-end">
                 <button className="flex items-center px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
                   <Search className="h-4 w-4 mr-2" />
                   Search Flights
                 </button>
+                <button type='button' onClick={()=>{return getData()}} className="flex items-center px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                  <CircleX className="h-4 w-4 mr-2" />
+                  Clear Search
+                </button>
+                
               </div>
-            </div>
+            </form>
+            {/* No Flights Found Message */}
+            {
+              noFlightMsg && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
+                  {noFlightMsg}
+                </div>
+              )
+            }
 
-            {/* Available Flights */}
+            {/* Available Flights */} {/* Also used for displaying search results */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">Available Flights</h2>
+                <h2 className="text-2xl font-bold text-blue-200">Available Flights</h2>
                 <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
                   <Filter className="h-4 w-4 mr-2" />
                   Filter
                 </button>
               </div>
 
-              {availableFlights.map((flight) => (
-                <div key={flight.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              {flights.map((flightObj) => (
+                <div key={flightObj.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
                     {/* Flight Info */}
                     <div className="lg:col-span-2">
@@ -282,20 +384,20 @@ export default function SkyLuxFlightBooking() {
                             <Plane className="h-6 w-6 text-white" />
                           </div>
                           <div>
-                            <h3 className="font-semibold text-gray-900">{flight.airline}</h3>
-                            <p className="text-sm text-gray-600">{flight.aircraft}</p>
+                            <h3 className="font-semibold text-gray-900">SkyLux Prime</h3>
+                            <p className="text-sm text-gray-600">{flightObj.flightName}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-1">
                           <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                          <span className="text-sm font-medium text-gray-700">{flight.rating}</span>
+                          <span className="text-sm font-medium text-gray-700">{flightObj.flightRating}</span>
                         </div>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <div className="text-center">
-                          <p className="text-2xl font-bold text-gray-900">{flight.departTime}</p>
-                          <p className="text-sm text-gray-600">{flight.from}</p>
+                        <div className="text-center"> 
+                          <p className="text-2xl font-bold text-gray-900">{new  Date(flightObj.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-sm text-gray-600">{flightObj.departureCity}</p>
                         </div>
                         <div className="flex-1 mx-6">
                           <div className="relative">
@@ -308,16 +410,16 @@ export default function SkyLuxFlightBooking() {
                               </div>
                             </div>
                           </div>
-                          <p className="text-center text-sm text-gray-600 mt-2">{flight.duration}</p>
+                          <p className="text-center text-sm text-gray-600 mt-2">{flightObj.flightDuration}</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-2xl font-bold text-gray-900">{flight.arriveTime}</p>
-                          <p className="text-sm text-gray-600">{flight.to}</p>
+                          <p className="text-2xl font-bold text-gray-900">{new Date(flightObj.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-sm text-gray-600">{flightObj.destinationCity}</p>
                         </div>
                       </div>
 
                       <div className="flex items-center space-x-4 mt-4">
-                        {flight.amenities.map((amenity, index) => (
+                        {flightObj.flightAmenities.map((amenity, index) => (
                           <div key={index} className="flex items-center space-x-1 text-sm text-gray-600">
                             {renderAmenityIcon(amenity)}
                             <span>{amenity}</span>
@@ -328,25 +430,30 @@ export default function SkyLuxFlightBooking() {
 
                     {/* Flight Details */}
                     <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex flex-row items-center space-x-2">
                         <Clock className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">Flight {flight.id}</span>
+                        <span className="text-sm text-gray-600">Flight {flightObj._id.slice(0,5).toUpperCase()}</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{flight.date}</span>
+                        <span className="text-sm text-gray-600">{new Date(flightObj.departureTime).toLocaleDateString()}</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Users className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{flight.availableSeats} seats left</span>
+                        <span className="text-sm text-gray-600">{flightObj.totalSeats} seats left</span>
                       </div>
-                      <div>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          flight.class === 'Business' ? 'bg-purple-100 text-purple-800' :
-                          'bg-blue-100 text-blue-800'
-                        }`}>
-                          {flight.class}
-                        </span>
+                      <div className="flex items-center space-x-2  gap-y-2 flex-wrap">
+                        {
+                          flightObj.flightClass.map((flightClass, index) => (
+                            <span key={index} className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              flightClass === 'Business' ? 'bg-purple-100 text-purple-800' :
+                              'bg-blue-100 text-blue-800'
+                            }`}>
+                              {flightClass}
+                            </span>
+                          ))
+                        }
+                
                       </div>
                     </div>
 
@@ -355,12 +462,12 @@ export default function SkyLuxFlightBooking() {
                       <div className="mb-4">
                         <div className="flex items-center justify-center space-x-1">
                           <DollarSign className="h-5 w-5 text-gray-600" />
-                          <span className="text-3xl font-bold text-gray-900">{flight.price}</span>
+                          <span className="text-3xl font-bold text-gray-900">{flightObj.price.toLocaleString()}</span>
                         </div>
                         <p className="text-sm text-gray-600">per person</p>
                       </div>
                       <button
-                        onClick={() => handleFlightSelect(flight)}
+                        onClick={() => handleFlightSelect(flightObj)}
                         className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                       >
                         Select Flight
@@ -381,15 +488,15 @@ export default function SkyLuxFlightBooking() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">Flight</p>
-                    <p className="font-semibold">{selectedFlight.id} - {selectedFlight.airline}</p>
+                    <p className="font-semibold">{selectedFlight._id.slice(0,5)} - {selectedFlight.flightName}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Route</p>
-                    <p className="font-semibold">{selectedFlight.from} → {selectedFlight.to}</p>
+                    <p className="font-semibold">{selectedFlight.departureCity} → {selectedFlight.destinationCity}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Date & Time</p>
-                    <p className="font-semibold">{selectedFlight.date} at {selectedFlight.departTime}</p>
+                    <p className="font-semibold">{new Date(selectedFlight.departureTime).toLocaleDateString()} at {new Date(selectedFlight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Price</p>
@@ -400,7 +507,7 @@ export default function SkyLuxFlightBooking() {
 
               {/* Booking Form */}
               <div className="p-6">
-                <div onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Passenger Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -413,7 +520,6 @@ export default function SkyLuxFlightBooking() {
                           onChange={handleChange}
                           required
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter first name"
                         />
                       </div>
 
@@ -471,14 +577,9 @@ export default function SkyLuxFlightBooking() {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
-                        <input
-                          type="date"
-                          name="dateOfBirth"
-                          value={bookingData.dateOfBirth}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
+                        <p className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                          {new Date(bookingData.dateOfBirth).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -486,6 +587,22 @@ export default function SkyLuxFlightBooking() {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Preferences</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Seat Class</label>
+                        <select
+                          name="seatClass"
+                          value={bookingData.seatClass}
+                          onChange={handleChange}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="">Select preference</option>
+                          <option value="Economy">Economy</option>
+                          <option value="Business">Business</option>
+                          <option value="First">First</option>
+                          <option value="Premium Economy">Premium Economy</option>
+                        </select>
+                      </div>
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Seat Preference</label>
                         <select
@@ -509,9 +626,12 @@ export default function SkyLuxFlightBooking() {
                           onChange={handleChange}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
+                          {/* Vegetarian", "Non-Vegetarian", "Kosher", "Halal", "Vegan", "Gluten-Free", "Regular" */}
                           <option value="">Select preference</option>
                           <option value="Regular">Regular</option>
                           <option value="Vegetarian">Vegetarian</option>
+                          <option value="Non-Vegetarian">Non-Vegetarian</option>
+                          <option value="Gluten-Free">Gluten-Free</option>
                           <option value="Vegan">Vegan</option>
                           <option value="Kosher">Kosher</option>
                           <option value="Halal">Halal</option>
@@ -526,7 +646,7 @@ export default function SkyLuxFlightBooking() {
                         value={bookingData.specialRequests}
                         onChange={handleChange}
                         rows="3"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full placeholder:text-gray-500 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Any special requests or requirements..."
                       />
                     </div>
@@ -543,7 +663,7 @@ export default function SkyLuxFlightBooking() {
                           value={bookingData.emergencyContactName}
                           onChange={handleChange}
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full placeholder:text-gray-500 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Emergency contact name"
                         />
                       </div>
@@ -556,7 +676,7 @@ export default function SkyLuxFlightBooking() {
                           value={bookingData.emergencyContactPhone}
                           onChange={handleChange}
                           required
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full placeholder:text-gray-500 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Emergency contact phone"
                         />
                       </div>
@@ -578,7 +698,15 @@ export default function SkyLuxFlightBooking() {
                       className="flex-1 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer transition-colors"
                     />
                   </div>
-                </div>
+
+                  {
+                    bookingSuccessMsg && (
+                      <div className="mt-4 bg-green-100 border border-green-400 text-green-600 font-medium p-4 rounded-lg">
+                        {bookingSuccessMsg}
+                      </div>
+                    ) 
+                  }
+                </form>
               </div>
             </div>
           </div>
