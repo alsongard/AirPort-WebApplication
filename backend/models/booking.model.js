@@ -7,6 +7,12 @@ const BookingSchema = new mongoose.Schema(
         flightId: {type:mongoose.Schema.Types.ObjectId, ref:"Flight"},
         seatClass: {type:String, enum:['Economy', 'Premium Economy', 'Business', 'First'], default:"Business"},
         bookingStatus: {type:String, enum:["confirmed", "cancelled", "pending"], default:"pending"},
+        seatPreference: {type:String, enum:["Aisle", "Window", "Middle"], default:"Aisle"},
+        mealPreference: {type:String, enum:["Vegetarian", "Non-Vegetarian", "Kosher", "Halal", "Vegan", "Gluten-Free", "Regular"], default:"Non-Vegetarian"},
+        specialRequests: {type:String, default:""},
+        seatClass: {type:String, enum:["Economy", "Business", "First", "Premium Economy"], default:"Economy"},
+        emergencyContactName: {type:String },
+        emergencyContactPhone: {type:String}
     },
     {
         timestamps: true
