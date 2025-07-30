@@ -9,6 +9,7 @@ import ContactPage from "./pages/contactPage";
 import Footer from "./components/footer";
 import ProfilePage from "./pages/profilePage";
 import RandomPage from "./pages/lostRandomPage.jsx";
+import SkyLuxFlightBooking from "./pages/bookFlight.jsx";
 function App()
 {
     const [darkTheme, setDarkTheme] = useState(false);
@@ -35,6 +36,7 @@ function App()
                         <Route  path="services" element={<ServicesPage/>}/>
                         <Route  path="contact" element={<ContactPage/>}/>
                         <Route path="profile" element={<ProfilePage/>}/>
+                        <Route path="booking" element={<SkyLuxFlightBooking/>}/>
                         <Route path="*" element={<RandomPage/>}/>
                     </Route>
                 </Routes>
