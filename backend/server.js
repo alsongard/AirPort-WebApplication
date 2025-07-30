@@ -106,16 +106,16 @@ app.post("/login", async (req,res)=>{
 
 // registeruserDetails: form 
 app.post("/regUserDetail", async (req, res)=>{
-    const {firstName, middleName, lastName, age, passportNumber, userId, phone, dateBirth,emergencyContact, nationality } = req.body;
+    const {firstName, middleName, lastName, age, passportNumber, userId, phone, dateBirth, emergencyContactName, emergencyContact,  nationality } = req.body;
     try
     {
-        if (!firstName || !middleName || !lastName || !age || !passportNumber || !userId || !phone || !dateBirth || !emergencyContact || !nationality)
+        if (!firstName || !middleName || !lastName || !age || !passportNumber || !userId || !phone || !dateBirth || !emergencyContactName || !emergencyContact || !nationality)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"})
         }
         // console.log(`firstName: ${firstName} \n middleName: ${middleName} \n lastName: ${lastName} \n age: ${age} \n passportNumber: ${passportNumber} \n userId: ${userId} \n phone: ${phone} \n dateBirth: ${dateBirth} \n emergencyContact: ${emergencyContact} \n nationality: ${nationality}`); // testing: working
 
-        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId, phone:phone,dateBirth: dateBirth, emergencyContact:emergencyContact, nationality:nationality });
+        const userDetails = await UserDetail.create({firstName:firstName, middleName:middleName, lastName:lastName, age:age, passportNumber:passportNumber, userId:userId, phone:phone,dateBirth: dateBirth, emergencyContact:emergencyContact, emergencyContactName:emergencyContactName ,  nationality:nationality });
         // console.log(userDetails);
         if (userDetails)
         {
@@ -151,7 +151,7 @@ app.get("/getUserDetail/:id", async (req,res)=>{
         {
             return res.status(404).json({success:false, msg:`No user with the given Id: ${id}`});
         }
-        return res.status(200).json({success:true, msg:"user details retrieved", data:{first_name: foundUserDetail.firstName, middle_name:foundUserDetail.middleName, last_name:foundUserDetail.lastName,user_id:foundUserDetail.userId, phone:foundUserDetail.phone, passport:foundUserDetail.passportNumber, emergencyContact:foundUserDetail.emergencyContact}})
+        return res.status(200).json({success:true, msg:"user details retrieved", data:{first_name: foundUserDetail.firstName, middle_name:foundUserDetail.middleName, last_name:foundUserDetail.lastName,user_id:foundUserDetail.userId, phone:foundUserDetail.phone, passport:foundUserDetail.passportNumber, emergencyContact:foundUserDetail.emergencyContact, dateOfBirth:foundUserDetail.dateBirth}})
     }
     catch(err)
     {
@@ -304,23 +304,63 @@ app.get("/flightDetails", async (req, res)=>{
 
 })
 
-
-app.post("/booking", async (req,res)=>{
-    const {userId, flightId, bookingStatus, seatClass} = req.body;
+// search flight 
+app.post("/flightSearch", async (req, res)=>{
+    const { departureCity,  destinationCity,  departureDate, returnDate } = req.body;
+    console.log(`departureCity: ${departureCity} \n destinationCity: ${destinationCity} \n departureDate: ${departureDate} \n returnDate: ${returnDate}`); // testing: working
     try
     {
-        if (!userId || !flightId || !bookingStatus || !seatClass)
+        if (!departureCity || !destinationCity || !departureDate || !returnDate)
+        {
+            console.log(`invalid input`);
+            return res.status(400).json({success:false, msg:"Invalid Input"});
+        }
+        //departureTime:departureTime, departureDate:departureDate, returnDate:returnDates
+        const flight_details = await Flight.find({departureCity:departureCity, destinationCity:destinationCity})
+        console.log(`flight_details`); // testing: working
+        console.log(flight_details); // testing: working
+        if (flight_details.length === 0)
+        {
+            return res.status(200).json({success:false, msg:"No flight found with the given details"})
+        }
+        return res.status(200).json({success:true, data:flight_details});
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:`Internal Server Error`});
+    }
+})
+
+
+app.post("/booking", async (req,res)=>{
+    const {userId, flightId, bookingStatus, seatPreference, mealPreference, emergencyContactName, emergencyContactPhone, specialRequest} = req.body;
+    console.log(`userId: ${userId} \n flightId: ${flightId} \n bookingStatus: ${bookingStatus} \n seatPreference: ${seatPreference} \n mealPreference: ${mealPreference} \n emergencyContactName: ${emergencyContactName} \n emergencyContactPhone: ${emergencyContactPhone} \n specialRequest: ${specialRequest}`); // testing: working
+    try
+    {
+        if (!userId || !flightId || !bookingStatus || !seatPreference || !mealPreference || !specialRequest)
         {
             return res.status(400).json({success:false, msg:"Invalid INput"});
         }
+        let booking_created;
+        if (!emergencyContactName || !emergencyContactPhone)
+        {
+            booking_created = await Booking.create({userId:userId, flightId:flightId, bookingStatus:bookingStatus, seatPreference:seatPreference, mealPreference:mealPreference, specialRequest:specialRequest});
+            console.log(`booking_created : with emergencyContactName & emergencyContactPhone not set`); // testing: working
+            console.log(booking_created); // testing: working
+        }
+        else
+            {
+            booking_created = await Booking.create({userId:userId, flightId:flightId, bookingStatus:bookingStatus, seatPreference:seatPreference, mealPreference:mealPreference, specialRequest:specialRequest});
+            console.log(`booking_created : with emergencyContactName & emergencyContactPhone set`); // testing: working
+            console.log(booking_created); // testing: working
+        }
 
-        const booking_created = await Booking.create({userId:userId, flightId:flightId, bookingStatus:bookingStatus, seatClass:seatClass});
-        console.log(booking_created); // testing:
         if (!booking_created)
         {
             return res.status(500).json({success:false, msg:"Server Error"})
         }
-        return res.status(200).json({success:true, msg:"Booking reserved", data:booking_created});
+        return res.status(200).json({success:true, msg:"Booking created successfully", data:booking_created});
     }
     catch(err)
     {
@@ -408,14 +448,14 @@ app.get("/payment", async (req,res)=>{
 //ADMIN FUNCIONALITIES
 // create flightDetails
 app.post("/flightDetails", async (req,res)=>{
-    const {flightName, departureCountry, departureCity ,destinationCountry, destinationCity, departureTime, arrivalTime, totalSeats, price} = req.body;
+    const {flightName, departureCountry, departureCity ,destinationCountry, destinationCity, departureTime, arrivalTime, totalSeats, price, flightDuration, flightAmenities, flightRating, flightClass} = req.body;
     try
     {
-        if (!flightName || !departureCountry || !departureCity || !destinationCountry  || !destinationCity || !departureTime || !arrivalTime || !totalSeats || !price)
+        if (!flightName || !departureCountry || !departureCity || !destinationCountry  || !destinationCity || !departureTime || !arrivalTime || !totalSeats || !price || !flightDuration || !flightAmenities || !flightRating || !flightClass)
         {
             return res.status(400).json({success:false, msg:"Invalid input"});
         }
-        const flight_created = await Flight.create({flightName:flightName, departureCountry:departureCountry, departureCity:departureCity, destinationCountry:destinationCountry, destinationCity:destinationCity, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price})
+        const flight_created = await Flight.create({flightName:flightName, departureCountry:departureCountry, departureCity:departureCity, destinationCountry:destinationCountry, destinationCity:destinationCity, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price, flightDuration:flightDuration, flightAmenities:flightAmenities, flightRating:flightRating, flightClass:flightClass})
         if (!flight_created)
         {
             return res.status(500).json({success:false, msg:"Error creating flight details"});
@@ -428,6 +468,33 @@ app.post("/flightDetails", async (req,res)=>{
         return res.status(500).json({success:false, msg:"Internal Server Error"})
     }
 })
+
+// update flight details
+app.put("/flightDetails/:id", async (req,res)=>{
+    const {id} = req.params;
+    const {flightName, departureCountry, departureCity ,destinationCountry, destinationCity, departureTime, arrivalTime, totalSeats, price, flightDuration, flightAmenities, flightRating, flightClass} = req.body;
+    try
+    {
+        if (!id)
+        {
+            return res.status(400).json({success:false, msg:"Invalid Input"});
+        }
+        const updatedFlight = await Flight.findByIdAndUpdate(id, {flightName:flightName, departureCountry:departureCountry, departureCity:departureCity, destinationCountry:destinationCountry, destinationCity:destinationCity, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price, flightDuration:flightDuration, flightAmenities:flightAmenities, flightRating:flightRating, flightClass:flightClass}, {new:true});
+        if (!updatedFlight)
+        {
+            return res.status(404).json({success:false, msg:`No flight found with id: ${id}`});
+        }
+        console.log(`updatedFlight`); // testing: working
+        console.log(updatedFlight); // testing: working
+        console.log(`Flight details updated successfully`);
+        return res.status(200).json({success:true, msg:"Flight details updated successfully", data:updatedFlight});
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:"Internal Server Error"});
+    }
+});
 
 const mongo_url = process.env.MONGO_URL;
 // console.log(mongo_url) working
