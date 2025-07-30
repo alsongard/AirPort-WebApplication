@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import axios from "axios";
 import {useNavigate} from "react-router-dom"
-export default function RegLogin() {
-
+import { connect } from 'react-redux';
+import setAuthHeader from "../utils/setAuthHeader"
+function RegLogin(props) {
   const navigate = useNavigate()
 
   const [isLogin, setIsLogin] = useState(true);
@@ -55,6 +56,7 @@ export default function RegLogin() {
   const handleSubmit =  async (event) => {
     event.preventDefault();
     console.log('Form submitted:', formData);
+
     // Add your form submission logic here
     if (isLogin)// checks if its true
     {
@@ -76,9 +78,11 @@ export default function RegLogin() {
           console.log(`This is user_id and typeof : ${typeof(user_id)}`);
           console.log(user_id);
           console.log(`This is ${user_id} || ${user_email} || ${token}`);
+          setAuthHeader(token);
           localStorage.setItem("token", token);
           localStorage.setItem("user_email", user_email);
           localStorage.setItem("User_id", user_id);
+          props.onLoggedIn();
           navigate("/profile");
         }
       }
@@ -294,3 +298,11 @@ export default function RegLogin() {
     </div>
   );
 }
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    onLoggedIn:()=>dispatch( {type:"ON_LOGGED_IN"})
+  }
+}
+
+
+export default connect(null, mapDispatchToProps)(RegLogin);
