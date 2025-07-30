@@ -11,7 +11,8 @@ const UserDetailSchema = new mongoose.Schema(
         userId: {ref:"User", type:mongoose.Schema.Types.ObjectId},
         phone: {type:Number, required:true},
         dateBirth: {type:Date, required:true},
-        emergencyContact:{type:Number, required:true}
+        emergencyContact:{type:Number, required:true},
+        emergencyContactName: {type:String, required:true}
     },
     {
         timestamps:true
