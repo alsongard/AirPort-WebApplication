@@ -244,4 +244,8 @@ Acknowledgements 👏
 
     Redux for predictable state management
 
-New chat
+
+
+https://github.com/user-attachments/assets/6fa772cb-d466-473e-a721-219df9d6ab19
+
+
