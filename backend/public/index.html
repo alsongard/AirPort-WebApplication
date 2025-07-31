@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirportWeb API Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./index.css"/>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-plane-departure"></i>
+                <div>
+                    <h1>AirportWeb API</h1>
+                    <div class="tagline">Powerful aviation management API for modern applications</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <section class="api-overview">
+            <h2><i class="fas fa-info-circle"></i> API Overview</h2>
+            <p>The AirportWeb API provides a comprehensive set of endpoints for managing airport operations, user accounts, flight information, bookings, and more. This RESTful API enables developers to build robust aviation management applications with secure authentication, user management, and flight operations.</p>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>Secure Authentication</h3>
+                    <p>JWT-based authentication with role-based access control for all endpoints</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-plane"></i>
+                    <h3>Flight Management</h3>
+                    <p>Comprehensive flight operations including search, details, and status tracking</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3>Booking System</h3>
+                    <p>End-to-end booking management with payment processing integration</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Travel Analytics</h3>
+                    <p>User travel statistics and preferences for personalized experiences</p>
+                </div>
+            </div>
+        </section>
+        
+        <h2 class="section-title"><i class="fas fa-users"></i> Authentication</h2>
+        <div class="endpoints-grid">
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/register</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Create a new user account with email and password.</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">email</span>
+                            <span class="param-desc">User's email address (must be unique)</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">password</span>
+                            <span class="param-desc">Strong password (min 8 characters)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/login</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Authenticate a user and return a JWT access token.</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">email</span>
+                            <span class="param-desc">Registered email address</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">password</span>
+                            <span class="param-desc">Account password</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-user-circle"></i> User Management</h2>
+        <div class="endpoints-grid">
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/regUserDetail</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Register additional details for a user profile.</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">userId</span>
+                            <span class="param-desc">ID of the user to update</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">details</span>
+                            <span class="param-desc">Object containing user details (name, phone, address, etc.)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/getUserDetail/:id</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Retrieve detailed information for a specific user.</p>
+                    <div class="params">
+                        <h4>URL Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">id</span>
+                            <span class="param-desc">ID of the user to retrieve</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-star"></i> Preferences & Statistics</h2>
+        <div class="endpoints-grid">
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/userpreferences</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Set or update user preferences for travel experience.</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">userId</span>
+                            <span class="param-desc">ID of the user</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">preferences</span>
+                            <span class="param-desc">Object containing user preferences (seat, meal, notifications, etc.)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/userpreferences/:userId</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Retrieve preferences for a specific user.</p>
+                    <div class="params">
+                        <h4>URL Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">userId</span>
+                            <span class="param-desc">ID of the user</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/travellingStat/:id</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Add travel statistics for a user.</p>
+                    <div class="params">
+                        <h4>URL Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">id</span>
+                            <span class="param-desc">User ID</span>
+                        </div>
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">stats</span>
+                            <span class="param-desc">Travel statistics object (miles, flights, destinations, etc.)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/travellingStats/:id</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Retrieve travel statistics for a specific user.</p>
+                    <div class="params">
+                        <h4>URL Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">id</span>
+                            <span class="param-desc">User ID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-plane"></i> Flight Operations</h2>
+        <div class="endpoints-grid">
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/flightDetails</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Retrieve a list of all available flight details.</p>
+                    <div class="params">
+                        <h4>Query Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">limit</span>
+                            <span class="param-desc">Number of results to return (optional)</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">offset</span>
+                            <span class="param-desc">Pagination offset (optional)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/flightSearch</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Search for flights based on criteria.</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">origin</span>
+                            <span class="param-desc">Departure airport code</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">destination</span>
+                            <span class="param-desc">Arrival airport code</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">date</span>
+                            <span class="param-desc">Departure date (YYYY-MM-DD)</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">passengers</span>
+                            <span class="param-desc">Number of passengers (optional)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-receipt"></i> Booking & Payment</h2>
+        <div class="endpoints-grid">
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/booking</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Create a new flight booking.</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">userId</span>
+                            <span class="param-desc">ID of the user making the booking</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">flightId</span>
+                            <span class="param-desc">ID of the flight to book</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">passengers</span>
+                            <span class="param-desc">Array of passenger details</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/booking/:id</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Retrieve booking details for a specific user.</p>
+                    <div class="params">
+                        <h4>URL Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">id</span>
+                            <span class="param-desc">User ID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/payment</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Process payment for a booking.</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">bookingId</span>
+                            <span class="param-desc">ID of the booking to pay for</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">paymentMethod</span>
+                            <span class="param-desc">Payment details (card, PayPal, etc.)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/payment</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Retrieve payment details (admin only).</p>
+                    <div class="params">
+                        <h4>Query Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">bookingId</span>
+                            <span class="param-desc">Filter by booking ID (optional)</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">userId</span>
+                            <span class="param-desc">Filter by user ID (optional)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title"><i class="fas fa-lock"></i> Admin Endpoints</h2>
+        <div class="endpoints-grid">
+            <div class="endpoint-card admin-section">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/flightDetails</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Create new flight details (admin only).</p>
+                    <div class="params">
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">flightNumber</span>
+                            <span class="param-desc">Unique flight number</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">origin</span>
+                            <span class="param-desc">Departure airport code</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">destination</span>
+                            <span class="param-desc">Arrival airport code</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">departure</span>
+                            <span class="param-desc">Scheduled departure datetime</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-name">arrival</span>
+                            <span class="param-desc">Scheduled arrival datetime</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint-card admin-section">
+                <div class="endpoint-header">
+                    <span class="method put">PUT</span>
+                    <span class="endpoint-path">/flightDetails/:id</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>Update existing flight details (admin only).</p>
+                    <div class="params">
+                        <h4>URL Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-name">id</span>
+                            <span class="param-desc">Flight ID to update</span>
+                        </div>
+                        <h4>Request Body</h4>
+                        <div class="param-row">
+                            <span class="param-name">updates</span>
+                            <span class="param-desc">Object containing fields to update</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 AirportWeb API | Version 1.2.0</p>
+        <p>For support, contact <span class="highlight">api-support@airportweb.com</span></p>
+    </footer>
+</body>
+</html>
