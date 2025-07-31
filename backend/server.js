@@ -4,6 +4,7 @@ const cors = require("cors");
 const app = express();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const path = require("node:path");
 
 
 
@@ -57,11 +58,12 @@ const corsOption = {
 };
 
 app.use(cors(corsOption));
+app.use(express.static("public")); // serves static files from public directory
 
 
 // home route
 app.get("/", (req,res)=>{
-    res.status(200).send("<h1>Welcome</h1>");
+    res.status(200).sendFile(path.join(__dirname, "public", "index.html"));
 })
 
 // create user
