@@ -1,6 +1,5 @@
 const express = require("express");
 require("dotenv").config();
-const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 const bcrypt = require("bcrypt");
@@ -39,7 +38,7 @@ const corsOption = {
             return callback(null,true); // remember second argument: returns true(permit domain) or false(permit domain) 
         }
         const allowedDomains = [
-            "https://air-port-web-application.vercel.app/",
+            "https://air-port-web-application.vercel.app",
             "http://localhost:5173"
         ]
         if (allowedDomains.includes(origin))// not equal the indexOf() method returns -1 if no value ns found in the array
