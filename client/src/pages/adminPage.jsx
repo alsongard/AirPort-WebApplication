@@ -69,46 +69,47 @@ export default function SkyLuxAdminDashboard() {
   const renderOverview = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+        <div className=" p-6 bg-gradient-to-br from-slate-700 via-blue-400 to-indigo-500 rounded-lg border-l-4 border-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-600 text-sm font-medium">Total Flights</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalFlights}</p>
+              <p className="text-white text-sm font-medium">Total Flights</p>
+              <p className="text-2xl font-bold text-white">{stats.totalFlights}</p>
             </div>
-            <Plane className="h-8 w-8 text-blue-500" />
+            <Plane className="h-8 w-8 text-white" />
           </div>
         </div>
         
-        <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+        <div className="bg-gradient-to-br from-slate-700 via-blue-400 to-indigo-500 p-6 rounded-lg border-l-4 border-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-600 text-sm font-medium">Total Users</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
+              <p className="text-white text-sm font-medium">Total Users</p>
+              <p className="text-2xl font-bold text-white">{stats.totalUsers}</p>
             </div>
-            <Users className="h-8 w-8 text-green-500" />
+            <Users className="h-8 w-8 text-white" />
           </div>
         </div>
         
-        <div className="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+        <div className="bg-gradient-to-br from-slate-700 via-blue-400 to-indigo-500 p-6 rounded-lg border-l-4 border-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-600 text-sm font-medium">Total Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalRevenue}</p>
+              <p className="text-white text-sm font-medium">Total Revenue</p>
+              <p className="text-2xl font-bold text-white">{stats.totalRevenue}</p>
             </div>
-            <CreditCard className="h-8 w-8 text-purple-500" />
+            <CreditCard className="h-8 w-8 text-white" />
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Flights</h3>
+
+        <div className="bg-gradient-to-br from-slate-500 via-blue-500 to-indigo-500 p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-white mb-4">Recent Flights</h3>
           <div className="space-y-3">
             {flightData.slice(0, 3).map((flight) => (
-              <div key={flight.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+              <div key={flight.id} className="flex flex-row items-center justify-between p-3 bg-gray-900 rounded">
                 <div>
-                  <p className="font-medium">{flight.id}: {flight.from} → {flight.to}</p>
-                  <p className="text-sm text-gray-600">{flight.date} at {flight.time}</p>
+                  <p className="font-medium text-white">{flight.id}: {flight.from} → {flight.to}</p>
+                  <p className="text-sm text-white">{flight.date} at {flight.time}</p>
                 </div>
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                   flight.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
@@ -122,34 +123,35 @@ export default function SkyLuxAdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div className="bg-gradient-to-br from-slate-500 via-blue-500 to-indigo-500  p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <button className="flex items-center justify-center p-3 bg-gray-900 text-white rounded-lg hover:bg-blue-700 transition-colors">
               <PlusCircle className="h-5 w-5 mr-2" />
               New Flight
             </button>
-            <button className="flex items-center justify-center p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+            <button className="flex items-center justify-center p-3 bg-gray-900 text-white rounded-lg hover:bg-green-700 transition-colors">
               <UserCheck className="h-5 w-5 mr-2" />
               User Approval
             </button>
-            <button className="flex items-center justify-center p-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+            <button className="flex items-center justify-center p-3 bg-gray-900 text-white rounded-lg hover:bg-purple-700 transition-colors">
               <Download className="h-5 w-5 mr-2" />
               Export Data
             </button>
-            <button className="flex items-center justify-center p-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+            <button className="flex items-center justify-center p-3 bg-gray-900 text-white rounded-lg hover:bg-orange-700 transition-colors">
               <Bell className="h-5 w-5 mr-2" />
               Send Alert
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );
 
   const renderFlights = () => (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="space-y-6 ">
+      <div className="flex flex-col  md:flex-row md:items-center md:justify-between gap-4">
         <h2 className="text-2xl font-bold text-gray-900">Flight Management</h2>
         <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
           <PlusCircle className="h-5 w-5 mr-2" />
@@ -418,38 +420,12 @@ export default function SkyLuxAdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">
-                Sky<span className="text-blue-600">Lux</span> Admin
-              </h1>
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                Administrator
-              </span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="relative p-2 text-gray-600 hover:text-gray-900">
-                <Bell className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-              </button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">A</span>
-                </div>
-                <span className="text-gray-900 font-medium">Admin User</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+
 
       <div className="flex">
         {/* Sidebar */}
-        <nav className="w-64 bg-white shadow-sm h-screen sticky top-0">
+        <nav className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-500 shadow-sm h-screen sticky top-0">
           <div className="p-4">
             <ul className="space-y-2">
               {menuItems.map((item) => {
@@ -461,7 +437,7 @@ export default function SkyLuxAdminDashboard() {
                       className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
                         activeTab === item.id
                           ? 'bg-blue-100 text-blue-700 font-medium'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          : 'text-gray-400 hover:bg-gray-100 hover:text-gray-900'
                       }`}
                     >
                       <IconComponent className="h-5 w-5 mr-3" />
