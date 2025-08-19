@@ -9,16 +9,23 @@ const FlightSchema = new mongoose.Schema(
         destinationCountry:{type:String, required:true},
         destinationCity:{type:String, required:true},
         totalSeats:{type:Number, required:true},
+        seatNumbers: {
+            firstSeats:{type:Number, required:true},
+            businessSeats: {type:Number, required:true},
+            premiumSeats:{type:Number, required:true},
+            economySeats: {type:Number, required:true}
+        },
         flightDuration:{type:String, required:true},
         flightAmenities:{type:[String], required:true},
-        flightRating:  {type:Number, default:0},
+        flightRating:  {type:Number, default:8},
         seatClass: {type:[String], required:true},
-        flightClass: {
-            business: {type:Number, required:true},
-            economy:{type:Number, required:true},
+        flightClassPrice: {
             first:{type:Number, required:true},
-            premium: {type:Number, required:true}
+            business: {type:Number, required:true},
+            premium: {type:Number, required:true},
+            economy:{type:Number, required:true}
         }
+
     },
     {
         timestamps:true
