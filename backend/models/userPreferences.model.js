@@ -16,7 +16,7 @@ const UserPreferencesSchema = new Schema({
     mealPreference: {
         type: String,
         enum: ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Kosher', 'Halal'],
-        default: 'Vegetarian'
+        default: 'Non-Vegetarian'
     },
     classPreference: {
         type:String,

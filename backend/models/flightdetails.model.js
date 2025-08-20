@@ -25,7 +25,6 @@ const FlightSchema = new mongoose.Schema(
             premium: {type:Number, required:true},
             economy:{type:Number, required:true}
         }
-
     },
     {
         timestamps:true
