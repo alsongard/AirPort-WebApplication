@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {CountryDropdown, RegionDropdown} from 'react-country-region-selector'
 import WebFont from "webfontloader";
-
+import axios from "axios";
 import { 
   Plane, 
   Users, 
@@ -159,12 +159,12 @@ export default function SkyLuxAdminDashboard() {
     </div>
   );
 
+  
+  const [openNewForm, setOpenNewForm] = useState(false); 
   function openNewFlightForm()
   {
-    console.log('Will be adding new filght');
+    setOpenNewForm((prevValue)=>!prevValue);
   }
-  
-  
   const AddFlightForm =()=>
   {
     const [newFlight, setNewFlight] = useState({
@@ -238,32 +238,42 @@ export default function SkyLuxAdminDashboard() {
           }
         }
         else
-        {
-          return {
-            ...prevData,
-            seatClass: prevData.seatClass.filter((seatClassItem)=>{return seatClassItem !== value})
+          {
+            return {
+              ...prevData,
+              seatClass: prevData.seatClass.filter((seatClassItem)=>{return seatClassItem !== value})
+            }
           }
-        }
-      })
-    }
-    const [departureCountry , setDepatureCountry] = useState();
-    const [departureCity, setDepatureCity] = useState();
+        })
+      }
+      const [departureCountry , setDepatureCountry] = useState();
+      const [departureCity, setDepatureCity] = useState();
+      
+      const [destinationCountry, setDestinationCountry] = useState();
+      const [destinationCity, setdestinationCity] = useState();
+      
+      const [newFlightSuccessMsg, setNewFlightSuccessMsg] = useState(true); 
+      async function handleSubmit(event)
+      {
+        event.preventDefault();
+        newFlight.departureCountry = departureCountry;
+        newFlight.departureCity = departureCity;
+        newFlight.destinationCity = destinationCity;
+        newFlight.destinationCountry = destinationCountry;
+        try
+        {
+          console.log(newFlight);
+          const new_flight = await axios.post("http://localhost:5000/api/flights/createFlight", newFlight)
   
-    const [destinationCountry, setDestinationCountry] = useState();
-    const [destinationCity, setdestinationCity] = useState();
-
-    function handleSubmit(event)
-    {
-      newFlight.departureCountry = departureCountry;
-      newFlight.departureCity = departureCity;
-      newFlight.destinationCity = destinationCity;
-      newFlight.destinationCountry = destinationCountry;
-
-      event.preventDefault();
-      console.log(newFlight);
-    }
+        }
+        catch(err)
+        {
+          console.log(`Error: ${err}`)
+        }
+  
+      }
     return (
-      <div className='bg-white rounded-lg'>
+      <div className='bg-white rounded-lg pb-[20px]'>
         <form onSubmit={handleSubmit} className='pb-[10px] px-[15px]'>
           <div className='grid grid-cols-2 space-x-[15px] gap-y-[30px] py-[15px] '>
             <div className=' flex flex-col shadow-[0px_0px_1px_#696969] p-[5px] rounded-md space-y-[2.5px]'>
@@ -362,8 +372,12 @@ export default function SkyLuxAdminDashboard() {
             </div>
 
           </div>
+          
           <input className='bg-green-900 rounded-md py-[10px] w-full hover:bg-green-500' type='submit' value='submit'/>
         </form>
+        {
+          newFlightSuccessMsg && (<p className='newFlightSuccess'>New Flight Successfully Added</p>)
+        }
       </div>
     )
   }
@@ -374,7 +388,7 @@ export default function SkyLuxAdminDashboard() {
         <h2 className="text-2xl font-bold text-white">Flight Management</h2>
         <button onClick={openNewFlightForm} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
           <PlusCircle className="h-5 w-5 mr-2" />
-          Create New Flight
+          {openNewForm ? "Close Form "  : "Create New Flight"}
         </button>
       </div>
 
@@ -445,18 +459,52 @@ export default function SkyLuxAdminDashboard() {
           </table>
         </div>
       </div>
-      <AddFlightForm/>
+      {
+        openNewForm && (<AddFlightForm/>)
+      }
+      
     </div>
   );
 
+
+  const [usersArray, setUsersArray] = useState([]);
+  async function getAllUsers()
+  {
+    try
+    {
+      const response = await axios.get("http://localhost:5000/api/users/allUser");
+      console.log(`this is response: ${response}`);
+      // console.log(response)
+      if (response.data.success){
+         // checks if its true
+         console.log(`success is true`);
+          const userdata = response.data.data
+          // console.log(`this is userdata`);
+          // console.log(userdata)
+          setUsersArray(userdata);
+          // console.log(usersArray);
+          /**
+           * id: "688a90d70e17f88d40ff8546"
+              createdAt: "2025-07-30T21:38:31.009Z"
+              email: "troy@gmail.com" from my view it seems that we will add buttons to get the data from various Collections using the user_id
+           */
+      }
+    }
+    catch(err)
+    {
+      console.log(`Error encountered when fetching data from getAllUsers`);
+    }
+  }
+  console.log(`this is UserArrays`)
+  // getAllUsers();
   const renderUsers = () => (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
         <div className="flex gap-2">
-          <button className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-            <UserCheck className="h-5 w-5 mr-2" />
-            Approve Users
+          <button onClick={getAllUsers} className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+            <Users className="h-5 w-5 mr-2" />
+            Get  Users Data
           </button>
           <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             <Download className="h-5 w-5 mr-2" />
@@ -510,6 +558,50 @@ export default function SkyLuxAdminDashboard() {
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div className='bg-white rounded-lg shadow-md '>
+          <table className="w-full ">
+            <thead className="">
+              <tr>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">USER ID</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EMAIL</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">JOIN DATE</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">USER DETAILS</td>
+                <td className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ACTIONS</td>
+              </tr>
+            </thead>
+            <tbody className=" divide-y divide-gray-200">
+              {
+                usersArray.map((userItem)=>{
+                  console.log(userItem);
+                  let userdate = new Date(userItem.createdAt);
+                  return (
+                    <tr key={userItem._id}>
+                      <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{userItem._id.slice(0,10)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">{userItem.email}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">{userdate.toLocaleDateString('sv-SE')}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                        <button className='bg-green-400 hover:bg-green-800 px-[10px] rounded-lg'>view</button>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button className="text-blue-600 hover:text-blue-900">
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button className="text-red-600 hover:text-red-900">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              }
             </tbody>
           </table>
         </div>
