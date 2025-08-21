@@ -2,8 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const {RegisterUserDetails} = require("../controllers/userDetails.controller");
-const { GetUserDetails } = require("../controllers/user.controller");
+const {RegisterUserDetails, GetUserDetails} = require("../controllers/userDetails.controller");
 
 router.post("/registerUserDetail",RegisterUserDetails);
 
