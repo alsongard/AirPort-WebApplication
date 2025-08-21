@@ -188,7 +188,8 @@ export default function SkyLuxAdminDashboard() {
       economySeats: "",
       businessSeats: "",
       firstSeats: "",
-      premiumSeats: ""
+      premiumSeats: "",
+      flightRating:""
 
     });
     function handleNewFlightChange(event)
@@ -368,7 +369,11 @@ export default function SkyLuxAdminDashboard() {
             </div>
             <div className=' flex flex-col space-y-[2.5px] shadow-[0px_0px_1px_black] p-[5px] rounded-md'>
               <label className='font-dm-serif' htmlFor='flightDuration'>Flight Duration</label>
-              <input id='flightduration' type="number" name="flightDuration" className='border-1 border-black p-[5px] rounded-md' value={newFlight.flightDuration} onChange={handleNewFlightChange}/>
+              <input id='flightduration' type="text" name="flightDuration" className='border-1 border-black p-[5px] rounded-md' value={newFlight.flightDuration} onChange={handleNewFlightChange}/>
+            </div>
+            <div className=' flex flex-col space-y-[2.5px] shadow-[0px_0px_1px_black] p-[5px] rounded-md'>
+              <label className='font-dm-serif' htmlFor='flightRating'>Flight Rating</label>
+              <input id='flightRating' type="number" name="flightRating" className='border-1 border-black p-[5px] rounded-md' value={newFlight.flightRating} onChange={handleNewFlightChange}/>
             </div>
 
           </div>
