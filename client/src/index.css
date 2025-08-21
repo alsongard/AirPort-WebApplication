@@ -32,4 +32,19 @@ body
 
 
 /* 0733 623 260 */
-/*
+
+
+
+@keyframes successMsg {
+  from { background-image:linear-gradient(to right, rgba(52, 180, 26, 0), rgba(19, 202, 34, 0.904));}
+  to {background-image: linear-gradient(to right, rgba(19, 202, 34, 0.904), rgba(52, 180, 26, 0.192));}
+}
+.newFlightSuccess {
+  @apply rounded-md w-[300px] p-[10px] text-center text-gray-900 mx-auto mt-[10px];
+  
+  animation-name:successMsg;
+  animation-duration: 5s;
+  animation-duration: ease-in;
+  animation-iteration-count: infinite;
+
+}
