@@ -14,12 +14,15 @@ import {configureStore} from "@reduxjs/toolkit";
 import reducerer from "./store/reducer.jsx";
 import requireAuth from "./requireAuth.jsx";
 import {Provider} from "react-redux";
+import SkyLuxAdminDashboard from "./pages/adminPage.jsx";
 import SetAuthHeader from "./utils/setAuthHeader.jsx";
+import SkyLuxAdminLogin from "./pages/adminLoginPage.jsx";
 
 function App()
 {
     const store = configureStore({reducer:reducerer});
     const token = localStorage.getItem("token");
+
     SetAuthHeader(token);
     if (token)
     {
@@ -27,6 +30,8 @@ function App()
     }
     const ProtectedProfilePage = requireAuth(ProfilePage);
     const ProtectedBookingPage  = requireAuth(SkyLuxFlightBooking);
+    const ProtectedAdminDashBoard = requireAuth(SkyLuxAdminDashboard);
+    
     const [darkTheme, setDarkTheme] = useState(false);
     let bg;
     useEffect(()=>{
@@ -47,12 +52,14 @@ function App()
                     <Routes>
                         <Route path="/" element={<div><Header/><Outlet/><Footer/></div>}>
                             <Route index element={<LandingPage/>}/>
-                            <Route  path="register" element={<RegLogin/>}/>
-                            <Route  path="about" element={<AboutPage/>}/>
-                            <Route  path="services" element={<ServicesPage/>}/>
-                            <Route  path="contact" element={<ContactPage/>}/>
+                            <Route path="register" element={<RegLogin/>}/>
+                            <Route path="admin" element={<SkyLuxAdminLogin/>}/> 
+                            <Route path="about" element={<AboutPage/>}/>
+                            <Route path="services" element={<ServicesPage/>}/>
+                            <Route path="contact" element={<ContactPage/>}/>
                             <Route path="profile" element={<ProtectedProfilePage/>}/>
                             <Route path="booking" element={<ProtectedBookingPage/>}/>
+                            <Route path='admindash' element={<ProtectedAdminDashBoard/>}/>
                             <Route path="*" element={<RandomPage/>}/>
                         </Route>
                     </Routes>
