@@ -46,5 +46,32 @@ body
   animation-duration: 5s;
   animation-duration: ease-in;
   animation-iteration-count: infinite;
+}
+
+
+.successMessage
+{
+  @apply bg-green-500 py-[5px] px-[10px] rounded-md w-1/4;
+}
+
+.loader
+{
+  border:2px solid white;
+  max-width: 150px;
+  margin: 0 auto;
+  /* padding:60px; */
+  /* border-radius:100%; */
+}
+@keyframes dot-animation {
+  from {color: white;}
+  to {color: blue;}
+}
+.dots-loader
+{
+  @apply text-[21px];
+  animation-name: dot-animation;
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 
 }
