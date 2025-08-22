@@ -6,6 +6,7 @@ import GetAllUsers from '../components/getAllUsers';
 import GetAllBookings from '../components/getBooking';
 import WebFont from "webfontloader";
 import SearchFlight from '../components/searchFlight';
+import SkyLuxSpinner from '../components/spinnerComponent';
 import axios from "axios";
 import { 
   Plane, 
@@ -40,7 +41,6 @@ export default function SkyLuxAdminDashboard() {
     })
   })
   const [activeTab, setActiveTab] = useState('overview');
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Sample data
   const flightData = [
@@ -48,10 +48,6 @@ export default function SkyLuxAdminDashboard() {
     { id: 'SL002', from: 'LAX', to: 'CHI', date: '2025-08-15', time: '09:15', status: 'Boarding', passengers: 165 },
     { id: 'SL003', from: 'MIA', to: 'NYC', date: '2025-08-15', time: '11:45', status: 'Delayed', passengers: 142 },
   ];
-
-
-
-
 
   const stats = {
     totalFlights: 156,
@@ -183,8 +179,8 @@ export default function SkyLuxAdminDashboard() {
         <h2 className="text-2xl font-bold text-white">Flight Management</h2>
         <div className='flex flex-row w-3/4  items-center justify-end  gap-x-[20px]'>
           <button onClick={openNewSearchForm} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <Search className="h-5 w-5 mr-2 text-white" />
-            <span className=" text-white">Search Flights</span>
+            {openSearchForm ?   <EyeOff className="h-5 w-5 mr-2"/> : <Search className="h-5 w-5 mr-2 text-white" />} {/**openSearchForm === true : displayViewEyeICON ELSE dislaySearchicon */}
+            {openSearchForm ?   <p>Close Search</p>  : <p className='text-white'>Search Flight</p>}
           </button>
           <button onClick={openNewFlightForm} className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             {openNewForm ? <CircleX  className="h-5 w-5 mr-2"  /> : <PlusCircle className="h-5 w-5 mr-2" /> }
@@ -323,43 +319,59 @@ export default function SkyLuxAdminDashboard() {
         return renderOverview();
     }
   };
+  const [ pageLoader, setPageLoader] = useState(true);
+  setTimeout(() => {
+    setPageLoader(false);
+  }, 5000);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
-
-
-      <div className="flex">
-        {/* Sidebar */}
-        <nav className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-500 shadow-sm h-screen sticky top-0">
-          <div className="p-4">
-            <ul className="space-y-2">
-              {menuItems.map((item) => {
-                const IconComponent = item.icon;
-                return (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => setActiveTab(item.id)}
-                      className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
-                        activeTab === item.id
-                          ? 'bg-blue-100 text-blue-700 font-medium'
-                          : 'text-gray-400 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <IconComponent className="h-5 w-5 mr-3" />
-                      {item.label}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+    <div>
+      {
+        pageLoader ?
+        (
+          <>
+            <SkyLuxSpinner />
+          </>
+        )
+        : 
+        (
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+            <div className="flex">
+              {/* Sidebar */}
+              <nav className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-500 shadow-sm h-screen sticky top-0">
+                <div className="p-4">
+                  <ul className="space-y-2">
+                    {menuItems.map((item) => {
+                      const IconComponent = item.icon;
+                      return (
+                        <li key={item.id}>
+                          <button
+                            onClick={() => setActiveTab(item.id)}
+                            className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors ${
+                              activeTab === item.id
+                                ? 'bg-blue-100 text-blue-700 font-medium'
+                                : 'text-gray-400 hover:bg-gray-100 hover:text-gray-900'
+                            }`}
+                          >
+                            <IconComponent className="h-5 w-5 mr-3" />
+                            {item.label}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </nav>
+      
+              {/* Main Content */}
+              <main className="flex-1 p-6">
+                {renderContent()}
+              </main>
+            </div>
           </div>
-        </nav>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          {renderContent()}
-        </main>
-      </div>
+  
+        )
+      }
     </div>
   );
 }
