@@ -31,6 +31,7 @@ const UserDetailRouter = require("./routes/userdetails.router");
 const BookingRouter = require("./routes/booking.router");
 const TravelRouter = require("./routes/travelStat.router");
 const UserPreferenceRouter = require("./routes/userPreference.router");
+const AdminRouter = require('./routes/admin.router');
 
 const corsOption = {
     origin: function (origin, callback){
@@ -71,7 +72,7 @@ app.use("/api/booking", BookingRouter); // success
 app.use("/api/travelstats", TravelRouter); // success
 app.use("/api/userdetails", UserDetailRouter); // success
 app.use("/api/preference", UserPreferenceRouter); //sucess
-
+app.use("/api/admin", AdminRouter);
 // home route
 app.get("/", (req,res)=>{
     res.status(200).sendFile(path.join(__dirname, "public", "index.html"));
