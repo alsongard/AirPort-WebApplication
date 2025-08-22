@@ -8,7 +8,10 @@ const FlightSchema = new mongoose.Schema(
         departureCity:{type:String, required:true},
         destinationCountry:{type:String, required:true},
         destinationCity:{type:String, required:true},
+        departureDate: {type:Date, required:true},
+        arrivalDate: {type:Date, required:true},
         totalSeats:{type:Number, required:true},
+        availableSeats: {type:Number},
         seatNumbers: {
             firstSeats:{type:Number, required:true},
             businessSeats: {type:Number, required:true},
@@ -24,12 +27,17 @@ const FlightSchema = new mongoose.Schema(
             business: {type:Number, required:true},
             premium: {type:Number, required:true},
             economy:{type:Number, required:true}
-        }
+        },
     },
     {
         timestamps:true
     }
 )
+FlightSchema.pre('save', function(next){
+    this.availableSeats = this.totalSeats;
+    next();
+});
+
 
 const Flight = mongoose.model("Flight", FlightSchema);
 module.exports = Flight;
