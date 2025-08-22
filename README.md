@@ -139,27 +139,41 @@ Admin Dashboard
 
 API Endpoints
 text
-```
 
 FLIGHTS:
-GET     /api/flights           - Get all flights (public)
-GET     /api/flights/:id       - Get flight details
-POST    /api/flights           - Create new flight (admin)
-PATCH   /api/flights/:id       - Update flight (admin)
-DELETE  /api/flights/:id       - Delete flight (admin)
+
+| METHOD  | ROUTE | DESCRIPTION |
+| ---- | --- | --- |
+| GET |     ``/api/flights/getFlights`` | Get all flights (public) |
+| POST |    ``/api/flights/createFlight`` | Create new flight (admin) |
+| POST |    ``/api/flights/searchFlight`` | Search Flight |
+| PUT |   ``/api/flights//updateFlight/:id``       | Update flight (admin) |
+| GET |     ``/api/flights/:id``       | Get flight details |
+| DELETE |  ``/api/flights/:id``       | Delete flight (admin) |
+
 
 BOOKINGS:
-POST    /api/bookings          - Create new booking
-GET     /api/bookings/user     - Get user bookings
-GET     /api/bookings/:id      - Get booking details
-PATCH   /api/bookings/:id      - Update booking
-DELETE  /api/bookings/:id      - Cancel booking
+
+| METHOD  | ROUTE | DESCRIPTION |
+| ---- | --- | --- |
+| POST |    ``/api/booking/setBooking``          | Create new booking |
+| GET  |    ``/api/booking/getUserBooking/:id``     | Get user bookings |
+| GET | ``/api/booking/getBooking`` | Get All Bookings(admin) |
+| PATCH|    ``/api/booking/:id :(upcomingfeature)``       | Update booking |
+| DELETE|   ``/api/booking/:id :(upcomingfeature)``       | Cancel booking |
+
+
 
 ADMIN:
-GET     /api/admin/users       - Get all users (admin)
-GET     /api/admin/bookings    - Get all bookings (admin)
-GET     /api/admin/stats       - Get system statistics (admin)
 
+| METHOD  | ROUTE | DESCRIPTION |
+| ---- | --- | --- |
+| GET     | ``/api/admin/users``       | Get all users (admin) |
+| DELETE | ``/api/admin/deleteUser/:user_id`` | Delete user (admin) |
+| POST | ``/api/admin/adminLogin ``  | Admin login |
+| POST | ``/api/admin/createAdmin`` | Create new admin user |
+
+```
 AUTH:UPCOMING FEATURES
 POST    /api/auth/register     - User registration
 POST    /api/auth/login        - User login
