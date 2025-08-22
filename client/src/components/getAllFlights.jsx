@@ -1,7 +1,7 @@
 // this file will be used to hold components for file operations
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {Edit, Trash2} from "lucide-react";
+import {Edit, Trash2, View} from "lucide-react";
 export default function GetAllFlights()
 {
     const [flightArray, setFlightArray]  = useState([]);
@@ -56,17 +56,20 @@ export default function GetAllFlights()
                         return (
                             <tr key={flightItem._id}>
                                 <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{flightItem._id.slice(0,8)}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{flightItem.departureCountry}-{flightItem.destinationCountry}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">{flightItem.departureCountry} → {flightItem.destinationCountry}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">{new Date(flightItem.departureTime).toLocaleDateString()}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">{flightItem.totalSeats}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">{flightItem.flightDuration}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium ">
                                     <div className="flex flex-row justify-center space-x-2">
-                                        <button className="text-green-600 hover:text-green-900">
+                                        <button title="Edit Flight" className="text-green-600 hover:text-green-900">
                                             <Edit className="h-4 w-4" />
                                         </button>
-                                        <button className="text-red-600 hover:text-red-900">
-                                            <Trash2 className="h-4 w-4" />
+                                        <button title="Delete Flight" className="text-red-600 hover:text-red-900">
+                                            <Trash2  className="h-4 w-4" />
+                                        </button>
+                                        <button title="View Flight Details" className="text-blue-600 hover:text-blue-900">
+                                            <View className="h-4 w-4" />
                                         </button>
                                     </div>
                                 </td>
