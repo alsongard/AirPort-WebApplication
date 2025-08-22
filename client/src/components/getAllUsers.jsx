@@ -88,7 +88,6 @@ export default function GetAllUsers()
                             <tbody className=" divide-y divide-gray-200">
                                 {
                                     usersArray.map((userItem)=>{
-                                        console.log(userItem);
                                         let userdate = new Date(userItem.createdAt);
                                         return (   
                                             <tr key={userItem._id}>
