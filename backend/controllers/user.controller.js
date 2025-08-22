@@ -79,5 +79,26 @@ const GetAllUsers = async (req, res)=>{
     }
 }
 
+const DeleteUser = async(req, res)=>{
+    const {user_id} = req.params;
+    try
+    {
+        const user_id = await User.findOne({_id:user_id});
+        if (user_id)
+        {
+            const result = await User.findOneAndDelete();
+            if (result)
+            {
+                return res.status(200).json({success:true, msg:'Successfully deleted User'});
+            }
+        }
 
-module.exports = {Register, Login, GetAllUsers};
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+    }
+}
+
+
+module.exports = {Register, Login, GetAllUsers, DeleteUser};
