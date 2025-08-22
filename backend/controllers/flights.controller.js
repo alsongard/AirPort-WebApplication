@@ -26,7 +26,7 @@ const CreateFlight = async (req,res)=>{
         firstSeats
         premiumSeats
      */
-    const {flightName, departureCountry, departureCity, destinationCountry, destinationCity, totalSeats, flightDuration, premium, business, economy, first, economySeats, businessSeats, firstSeats, premiumSeats, flightAmenities, seatClass, flightRating, } = req.body;
+    const {flightName, departureCountry, departureCity, destinationCountry, destinationCity, totalSeats, flightDuration, premium, business, economy, first, economySeats, businessSeats, firstSeats, premiumSeats, flightAmenities, seatClass, flightRating } = req.body;
     const seatNumbers = {
         "firstSeats":firstSeats,
         "businessSeats":businessSeats,
@@ -123,14 +123,16 @@ const GetFlightDetails = async (req, res)=>{
 
 const UpdateFlightDetails = async (req,res)=>{
     const {id} = req.params;
-    const {flightName, departureCountry, departureCity ,destinationCountry, destinationCity, departureTime, arrivalTime, totalSeats, price, flightDuration, flightAmenities, flightRating, flightClass} = req.body;
+    const {flightName, departureCountry, departureCity, destinationCountry, destinationCity, totalSeats, flightDuration, premium, business, economy, first, economySeats, businessSeats, firstSeats, premiumSeats, flightAmenities, seatClass, flightRating } = req.body;
     try
     {
         if (!id)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"});
         }
-        const updatedFlight = await Flight.findByIdAndUpdate(id, {flightName:flightName, departureCountry:departureCountry, departureCity:departureCity, destinationCountry:destinationCountry, destinationCity:destinationCity, departureTime:departureTime, arrivalTime:arrivalTime, totalSeats:totalSeats, price:price, flightDuration:flightDuration, flightAmenities:flightAmenities, flightRating:flightRating, flightClass:flightClass}, {new:true});
+        const updatedFlight = await Flight.findByIdAndUpdate(id, {flightName, departureCountry, departureCity, destinationCountry, destinationCity, totalSeats, flightDuration, premium, business, economy, first, economySeats, businessSeats, firstSeats, premiumSeats, flightAmenities, seatClass, flightRating}, {new:true});
+        console.log("Right after updating");
+        console.log(updatedFlight);
         if (!updatedFlight)
         {
             return res.status(404).json({success:false, msg:`No flight found with id: ${id}`});
