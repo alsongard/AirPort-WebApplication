@@ -1,5 +1,5 @@
 const UserDetail = require("../models/userdetails.model");
-
+const User = require("../models/user.model");
 const RegisterUserDetails = async (req, res)=>{
     const {firstName, middleName, lastName, age, passportNumber, userId, phone, dateBirth, emergencyContactName, emergencyContact,  nationality } = req.body;
     try
