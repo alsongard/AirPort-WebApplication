@@ -15,7 +15,8 @@ const UserTravellingStatsSchema = new mongoose.Schema({
         default: 0 // in kilometers
     },
     lastTripDate: {
-        type: Date
+        type: Date,
+        default: new Date()
     },
     countriesVisited: {
         type: Number,
@@ -25,6 +26,12 @@ const UserTravellingStatsSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+
+// UserTravellingStatsSchema.pre('save', function(next){
+//     this.lastTripDate = new Date();
+//     next();
+// })
 
 const UserTravellingStats = mongoose.model('TravellingStat', UserTravellingStatsSchema);
 module.exports = UserTravellingStats;
