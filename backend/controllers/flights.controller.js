@@ -101,6 +101,7 @@ const SearchFlight = async (req, res)=>{
     }
 }
 
+// get All Flight Details
 const GetFlightDetails = async (req, res)=>{
     try
     {
