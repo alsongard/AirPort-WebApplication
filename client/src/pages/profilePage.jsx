@@ -11,7 +11,8 @@ import axios from "axios";
 import ProfileComponent from '../components/profileComponent';
 import AirportForms from '../components/UserDetailRegForms';
 import SkyLuxSpinner from '../components/spinnerComponent';
-export default function ProfilePage() {
+export default function ProfilePage() 
+{
 
   const apiURL = import.meta.env.VITE_API_URL;
   // get items from localStorage:
@@ -21,7 +22,7 @@ export default function ProfilePage() {
 
   const [isloading, setIsLoading] = useState(true);
 
-  const [displayRegForm, setDisplayRegForm] = useState(false);
+  const [displayRegForm, setDisplayRegForm] = useState(true);
 
   const getUserDetails = async ()=>{
     try
@@ -49,6 +50,7 @@ export default function ProfilePage() {
       console.log(`Error: ${err}`);
     }
   }
+
   useEffect(()=>{
     getUserDetails();
   },[])
