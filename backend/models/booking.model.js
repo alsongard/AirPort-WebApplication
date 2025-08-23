@@ -5,6 +5,7 @@ const BookingSchema = new mongoose.Schema(
     {
         userId: {type:mongoose.Schema.Types.ObjectId, ref:"User", required:true},
         flightId: {type:mongoose.Schema.Types.ObjectId, ref:"Flight", required:true},
+        departureDate: {type:Date, required:true},
         bookingStatus: {type:String, enum:["confirmed", "cancelled", "pending"], default:"pending"},
         seatPreference: {type:String, enum:["Aisle", "Window", "Middle"], default:"Aisle"},
         mealPreference: {type:String, enum:["Vegetarian", "Non-Vegetarian", "Kosher", "Halal", "Vegan", "Gluten-Free", "Regular"], default:"Non-Vegetarian"},
