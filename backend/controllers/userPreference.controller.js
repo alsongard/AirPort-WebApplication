@@ -2,6 +2,7 @@ const UserPreference = require("../models/userPreferences.model");
 const User = require("../models/user.model");
 
 const SetUserPreference =  async (req, res)=>{
+    // the userId is used to match the userDetails to the user
     const {userId, seatPreference, mealPreference, classPreference, notifications, newsletter} = req.body;
     console.log(`userId: ${userId} \n seatPreference: ${seatPreference} \n mealPreference: ${mealPreference} \n classPreference: ${classPreference} \n notifications: ${notifications} \n newsletter: ${newsletter}`);
 
