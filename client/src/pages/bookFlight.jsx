@@ -42,7 +42,7 @@ export default function SkyLuxFlightBooking() {
     try
     {
       console.log(`user_id : ${user_id}`)
-      const res = await axios.get(`${apiURL}/getUserDetail/${user_id}`);
+      const res = await axios.get(`${apiURL}/api/userdetails/getUserDetails/${user_id}`);
       // console.log(`This is response: ${res.status}`);
       // console.log(res);
   
@@ -125,9 +125,10 @@ export default function SkyLuxFlightBooking() {
     });
     try
     {
-      const response = await axios.post(`${apiURL}/booking`, {
+      const response = await axios.post(`${apiURL}/api/booking/setBooking`, {
         userId:user_id,
         flightId: selectedFlight._id,
+        departureDate: selectedFlight.departureDate,
         bookingStatus: 'confirmed',
         seatPreference: bookingData.seatPreference,
         mealPreference: bookingData.mealPreference,
@@ -190,10 +191,11 @@ export default function SkyLuxFlightBooking() {
   const [flights, setFlights] = useState([]);
   const getFlights = async () => {
     try { 
-      const response = await axios.get(`${apiURL}/flightDetails`);
+      const response = await axios.get(`${apiURL}/api/flights/getFlights`);
       if (response.data.success)
         {
-         console.log(response.data.data);
+          console.log('this is flights from getFlights');
+          console.log(response.data.data);
           setFlights(response.data.data);
         }
     } catch (error) {
@@ -209,7 +211,7 @@ export default function SkyLuxFlightBooking() {
     // Perform search flight logic here
     try
     {
-      const response = await axios.post(`${apiURL}/flightSearch`, {
+      const response = await axios.post(`${apiURL}/api/flights/searchFlight`, {
         departureCity: searchFilters.from,
         destinationCity: searchFilters.to,
         departureDate: searchFilters.departDate,
@@ -247,7 +249,6 @@ export default function SkyLuxFlightBooking() {
   // Initial fetch for flights and user details
   useEffect(() => {
     getFlights();
-
   },[])
   
   return (
@@ -378,7 +379,7 @@ export default function SkyLuxFlightBooking() {
               </div>
 
               {flights.map((flightObj) => (
-                <div key={flightObj.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                <div key={flightObj._id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
                     {/* Flight Info */}
                     <div className="lg:col-span-2">
@@ -400,7 +401,7 @@ export default function SkyLuxFlightBooking() {
 
                       <div className="flex items-center justify-between">
                         <div className="text-center"> 
-                          <p className="text-2xl font-bold text-gray-900">{new  Date(flightObj.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-2xl font-bold text-gray-900">{new  Date(flightObj.departureDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                           <p className="text-sm text-gray-600">{flightObj.departureCity}</p>
                         </div>
                         <div className="flex-1 mx-6">
@@ -417,7 +418,7 @@ export default function SkyLuxFlightBooking() {
                           <p className="text-center text-sm text-gray-600 mt-2">{flightObj.flightDuration}</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-2xl font-bold text-gray-900">{new Date(flightObj.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-2xl font-bold text-gray-900">{new Date(flightObj.arrivalDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                           <p className="text-sm text-gray-600">{flightObj.destinationCity}</p>
                         </div>
                       </div>
@@ -440,7 +441,7 @@ export default function SkyLuxFlightBooking() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{new Date(flightObj.departureTime).toLocaleDateString()}</span>
+                        <span className="text-sm text-gray-600">{new Date(flightObj.departureDate).toLocaleDateString()}</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Users className="h-4 w-4 text-gray-400" />
@@ -448,14 +449,21 @@ export default function SkyLuxFlightBooking() {
                       </div>
                       <div className="flex items-center space-x-2  gap-y-2 flex-wrap">
                         {
-                          flightObj.flightClass.map((flightClass, index) => (
-                            <span key={index} className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              flightClass === 'Business' ? 'bg-purple-100 text-purple-800' :
-                              'bg-blue-100 text-blue-800'
-                            }`}>
-                              {flightClass}
-                            </span>
-                          ))
+                          flightObj.seatClass  === undefined ? 
+                          (
+                            <p>No FlightClass information for {flightObj.flightName} </p>
+                          )
+                          : 
+                          (
+                            flightObj.seatClass.map((flightClass, index) => (
+                              <span key={index} className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                flightClass === 'Business' ? 'bg-purple-100 text-purple-800' :
+                                'bg-blue-100 text-blue-800'
+                              }`}>
+                                {flightClass}
+                              </span>
+                            ))
+                          )
                         }
                 
                       </div>
@@ -466,9 +474,9 @@ export default function SkyLuxFlightBooking() {
                       <div className="mb-4">
                         <div className="flex items-center justify-center space-x-1">
                           <DollarSign className="h-5 w-5 text-gray-600" />
-                          <span className="text-3xl font-bold text-gray-900">{flightObj.price.toLocaleString()}</span>
+                          <span className="text-3xl font-bold text-gray-900">{flightObj.flightClassPrice.economy.toLocaleString()}</span>
                         </div>
-                        <p className="text-sm text-gray-600">per person</p>
+                        <p className="text-sm text-gray-600">Economy per person </p>
                       </div>
                       <button
                         onClick={() => handleFlightSelect(flightObj)}
@@ -500,11 +508,11 @@ export default function SkyLuxFlightBooking() {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Date & Time</p>
-                    <p className="font-semibold">{new Date(selectedFlight.departureTime).toLocaleDateString()} at {new Date(selectedFlight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                    <p className="font-semibold">{new Date(selectedFlight.departureDate).toLocaleDateString()} at {new Date(selectedFlight.departureDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Price</p>
-                    <p className="font-semibold text-2xl text-blue-600">${selectedFlight.price}</p>
+                    <p className="font-semibold text-2xl text-blue-600">${selectedFlight.flightClassPrice.economy}</p>
                   </div>
                 </div>
               </div>
@@ -697,7 +705,7 @@ export default function SkyLuxFlightBooking() {
                     </button>
                     <input
                       type="submit"
-                      value={`Book Flight - $${selectedFlight.price}`}
+                      value={`Book Flight - $${selectedFlight.flightClassPrice.economy}`}
                       onClick={handleSubmit}
                       className="flex-1 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer transition-colors"
                     />

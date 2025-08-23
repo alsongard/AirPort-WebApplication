@@ -1,3 +1,4 @@
+// this component is used to show the information on userDetails & userPreferences
 import React, { useState, useEffect } from 'react';
 import { 
   User, Edit3, Camera, Plane, Star, Clock, MapPin, 
@@ -37,7 +38,7 @@ export default function ProfileComponent(props)
     try
     {
       console.log(`user_id : ${user_id}`)
-      const res = await axios.get(`${apiURL}/getUserDetail/${user_id}`);
+      const res = await axios.get(`https://airportwebapp-api.vercel.app/api/userdetails/getUserDetails/${user_id}`);
       // console.log(`This is response: ${res.status}`);
       // console.log(res);
   
@@ -58,7 +59,7 @@ export default function ProfileComponent(props)
   const getTravelStats = async ()=>{
     try
     {
-      const res = await axios.get(`${apiURL}/travellingStats/${user_id}`);
+      const res = await axios.get(`${apiURL}/api/travelstats/getUserTravellingStat/${user_id}`);
       // console.log(res);
       if (res.data.success)
       {
@@ -73,7 +74,7 @@ export default function ProfileComponent(props)
   const getUserPreference = async ()=>{
     try
     {
-      const res = await axios.get(`${apiURL}/userpreferences/${user_id}`);
+      const res = await axios.get(`${apiURL}/api/preference/getUser/${user_id}`);
       // console.log(res); // testing:working
       if (res.data.success)
       {
@@ -88,7 +89,7 @@ export default function ProfileComponent(props)
   const getBooking = async ()=>{
     try
     {
-      const res = await axios.get(`${apiURL}/booking/${user_id}`);
+      const res = await axios.get(`${apiURL}/api/booking/getUserBooking/${user_id}`);
       // console.log(`this is res on getBooking`); // testing:working
       // console.log(res); // testing:working
       console.log(`this is res.data on getBooking`); // testing:working

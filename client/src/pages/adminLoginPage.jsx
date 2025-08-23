@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 function SkyLuxAdminLogin(props) 
 {
+    const apiURL = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
     const [loginData, setLoginData] = useState({
         adminUser: '',
@@ -28,7 +29,7 @@ function SkyLuxAdminLogin(props)
         // Handle admin login logic here
         try
         {
-            const response = await axios.post('http://localhost:5000/api/users/adminLogin', loginData);
+            const response = await axios.post(`${apiURL}/api/admin/adminLogin`, loginData);
             console.log('Admin login successful:', response.data);
             if (response.data.success)
             {

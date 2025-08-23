@@ -27,7 +27,8 @@ export default function ProfilePage()
   const getUserDetails = async ()=>{
     try
     {
-      const res = await axios.get(`${apiURL}/getUserDetail/${user_id}`);
+      // if userdetails exist no need to register userDetails
+      const res = await axios.get(`${apiURL}/api/userdetails/getUserDetails/${user_id}`);
       // console.log(`This is response: ${res.status}`);
       // console.log(res);
   

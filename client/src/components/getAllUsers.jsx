@@ -13,7 +13,7 @@ export default function GetAllUsers()
             try
             {
                 // http://localhost:5000/api/users/allUser
-                const response = await axios.get("http://localhost:5000/api/users/allUser");
+                const response = await axios.get("https://airportwebapp-api.vercel.app/api/admin/users");
                 console.log(`this is response: `);
                 console.log(response)
                 if (response.data.success){
@@ -48,7 +48,7 @@ export default function GetAllUsers()
         {
             if (result) // true
             {
-                const response = await axios.delete(`http://localhost:5000/api/user/deleteUser/${id}`);
+                const response = await axios.delete(`https://airportwebapp-api.vercel.app/api/admin/deleteUser/${id}`);
                 if (response.data.success)
                 {
                     setDeleteSuccessMsg(true);

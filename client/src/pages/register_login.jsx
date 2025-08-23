@@ -65,7 +65,7 @@ function RegLogin(props) {
       {
         // functioning done
         console.log(`Login: ${isLogin}`)
-        const res = await axios.post(`${apiURL}/login`, {
+        const res = await axios.post(`${apiURL}/api/users/login`, {
           UserEmail:formData.useremail,
           UserPassword:formData.password
         })
@@ -98,7 +98,7 @@ function RegLogin(props) {
       try
       {
         console.log(`Registration: ${isLogin}`)
-        const res = await axios.post(`${apiURL}/register`, {
+        const res = await axios.post(`${apiURL}/api/users/register`, {
           UserEmail:formData.useremail,
           UserPassword:formData.password
         })

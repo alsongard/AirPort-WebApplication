@@ -9,7 +9,7 @@ function GetAllBookings()
         async function getAllBookings()
         {
             try {
-                const response = await axios.get("http://localhost:5000/api/booking/getBookings");
+                const response = await axios.get("https://airportwebapp-api.vercel.app/api/booking/getBookings");
                 if (response.data.success) // checks if true
                 {
                     const bookings = response.data.data;

@@ -71,7 +71,7 @@ export default function AirportForms() {
 
     try
     {
-      const res = await axios.post(`${apiURL}/regUserDetail`, {
+      const res = await axios.post(`${apiURL}/api/userdetails/registerUserDetail`, {
         firstName: passengerData.firstName,
         middleName: passengerData.middleName,
         lastName: passengerData.lastName,
@@ -112,7 +112,7 @@ export default function AirportForms() {
     // Handle preferences form submission logic here
     try
     {
-      const res = await axios.post(`${apiURL}/userpreferences`, preferencesData);
+      const res = await axios.post(`${apiURL}/api/preference/setUser`, preferencesData);
       // console.log(`this is response`); //testing:working
       // console.log(res); //testing:working
       // console.log(`this is response.data`); //testing:working
@@ -124,7 +124,13 @@ export default function AirportForms() {
         setTimeout(()=>{
           window.location.reload()
         }, 8000)
+
       }
+      const response = await axios.post(`${apiURL}/api/travelstats/setTravellingStat/${user_id}`, {
+        userId: user_id,
+        trips: 0,
+        distance: 0,
+      });
     }
     catch(err)
     {

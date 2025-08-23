@@ -12,7 +12,7 @@ export default function GetAllFlights()
             {
                 try
                 {
-                    const response = await axios.get("http://localhost:5000/api/flights/getFlights");
+                    const response = await axios.get("https://airportwebapp-api.vercel.app/api/flights/getFlights");
                     console.log(`this is response`);
                     console.log(response);
                     if (response.data.success)

@@ -102,7 +102,7 @@ export default function AddFlightForm()
         try
         {
             console.log(newFlight);
-            const new_flight = await axios.post("http://localhost:5000/api/flights/createFlight", newFlight)
+            const new_flight = await axios.post("https://airportwebapp-api.vercel.app/api/flights/createFlight", newFlight)
             if (new_flight.data.sucess)
             {
                 setNewFlightSuccessMsg(true);

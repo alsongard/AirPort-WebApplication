@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import axios from "axios";
 export default function SearchFlight()
 {
+    const apiURL = import.meta.env.VITE_API_URL;
     const [searchFlightData, setSearchFlightData] = useState({
         departureCity: '',
         destinationCity: '',
@@ -19,7 +20,7 @@ export default function SearchFlight()
         try
         {
             setDisplayResults(true);
-            const response = await axios.post("http://localhost:5000/api/flights/searchFlight", searchFlightData);
+            const response = await axios.post(`${apiURL}/api/flights/searchFlight`, searchFlightData);
             console.log(`this is response`);
             console.log(response);
             if (response.data.success)
