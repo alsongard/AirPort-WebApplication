@@ -79,6 +79,24 @@ const LogAdmin = async (req, res) => {
         return res.status(500).json({ success: false, msg: `Error: ${err}` });
     }
 }
+const DeleteFlight = async (req, res)=>{
+    try
+    {
+        const {id} = req.params;
+        const deletedFlight = await Flight.findByIdAndDelete(id);
+        // when a flight details is deleted i think it's neccessary to remove them from bookings: after
+        // research settng a field in booking would be appropriate : flightStatus: cancelled
+        if (!deletedFlight)
+        {
+            return res.status(404).json({success:false, msg:`No flight found with id: ${id}`});
+        }
+        return res.status(200).json({success:true, msg:"Flight deleted successfully"});
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+    }
+}
 
-module.exports = {GetAllUsers,DeleteUser, LogAdmin, CreateAdmin};
+module.exports = {GetAllUsers,DeleteUser, LogAdmin, CreateAdmin, DeleteFlight};
 
