@@ -60,7 +60,7 @@ const SingleFlightData = async (req, res)=>{
         {
             return res.status(400).json({success:false, msg:"Invalid Input"});
         }
-        const flightData = await Flight.findById({id: id})
+        const flightData = await Flight.findById({_id: id})
         if (flightData)
         {
             console.log('flightData');
