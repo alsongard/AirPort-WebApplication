@@ -1,7 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const Flight = require("../models/flightdetails.model")
 const saltRounds = 10;
 
 
@@ -55,6 +55,7 @@ const SingleFlightData = async (req, res)=>{
     try
     {
         const {id} =  req.params;
+        console.log(`this is id: ${id}`);
         if (!id)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"});
@@ -62,6 +63,8 @@ const SingleFlightData = async (req, res)=>{
         const flightData = await Flight.findById({id: id})
         if (flightData)
         {
+            console.log('flightData');
+            console.log(flightData);
             return res.status(200).json({success:true, data:flightData});
         }
     }
