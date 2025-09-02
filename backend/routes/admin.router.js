@@ -8,7 +8,7 @@ router.delete("/deleteUser/:user_id", DeleteUser);
 router.post("/adminLogin", LogAdmin);
 router.post("/createAdmin", CreateAdmin);
 router.delete("/deleteFlight/:id", DeleteFlight);
-route.get("/singleFlight/:id", SingleFlightData)
+router.get("/singleFlight/:id", SingleFlightData)
 
 
 module.exports = router;
