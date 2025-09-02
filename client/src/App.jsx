@@ -17,6 +17,7 @@ import {Provider} from "react-redux";
 import SkyLuxAdminDashboard from "./pages/adminPage.jsx";
 import SetAuthHeader from "./utils/setAuthHeader.jsx";
 import SkyLuxAdminLogin from "./pages/adminLoginPage.jsx";
+import UpdatePage from "./pages/updatePage.jsx";
 
 function App()
 {
@@ -60,6 +61,7 @@ function App()
                             <Route path="profile" element={<ProtectedProfilePage/>}/>
                             <Route path="booking" element={<ProtectedBookingPage/>}/>
                             <Route path='admindash' element={<ProtectedAdminDashBoard/>}/>
+                            <Route path='update/:id' element={<UpdatePage/>}/>
                             <Route path="*" element={<RandomPage/>}/>
                         </Route>
                     </Routes>
