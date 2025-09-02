@@ -51,7 +51,26 @@ const CreateAdmin = async (req, res)=>{
         console.log(`Error: ${err}`);
     }
 }
-
+const SingleFlightData = async (req, res)=>{
+    try
+    {
+        const {id} =  req.params;
+        if (!id)
+        {
+            return res.status(400).json({success:false, msg:"Invalid Input"});
+        }
+        const flightData = await Flight.findById({id: id})
+        if (flightData)
+        {
+            return res.status(200).json({success:true, data:flightData});
+        }
+    }
+    catch(err)
+    {
+        console.log(`Error: ${err}`);
+        return res.status(500).json({success:false, msg:'Internal Server Error'});
+    }
+}
 const LogAdmin = async (req, res) => {
     const { adminUser, password } = req.body;
     const role = "Admin";
@@ -98,5 +117,5 @@ const DeleteFlight = async (req, res)=>{
     }
 }
 
-module.exports = {GetAllUsers,DeleteUser, LogAdmin, CreateAdmin, DeleteFlight};
+module.exports = {GetAllUsers,DeleteUser, LogAdmin, CreateAdmin, DeleteFlight, SingleFlightData};
 
