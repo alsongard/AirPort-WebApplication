@@ -9,6 +9,6 @@ router.post("/createFlight",CreateFlight);
 router.get("/getFlights", GetFlightDetails);
 
 router.post("/searchFlight", SearchFlight);
-router.post("/updateFlight/:id", UpdateFlightDetails);
+router.put("/updateFlight/:id", UpdateFlightDetails);
 
 module.exports = router;

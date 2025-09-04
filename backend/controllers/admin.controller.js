@@ -120,5 +120,6 @@ const DeleteFlight = async (req, res)=>{
     }
 }
 
+
 module.exports = {GetAllUsers,DeleteUser, LogAdmin, CreateAdmin, DeleteFlight, SingleFlightData};
 

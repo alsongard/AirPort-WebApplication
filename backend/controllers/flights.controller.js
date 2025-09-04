@@ -123,24 +123,62 @@ const GetFlightDetails = async (req, res)=>{
 
 const UpdateFlightDetails = async (req,res)=>{
     const {id} = req.params;
-    const {flightName, departureCountry, departureCity, destinationCountry, destinationCity, totalSeats, flightDuration, premium, business, economy, first, economySeats, businessSeats, firstSeats, premiumSeats, flightAmenities, seatClass, flightRating } = req.body;
+
+    const {
+        flightName,
+        departureCountry,
+        departureCity,
+        destinationCountry,
+        destinationCity,
+        departureDate,
+        arrivalDate,
+        totalSeats,
+        firstSeats,
+        businessSeats,
+        premiumSeats,
+        economySeats,
+        flightDuration,
+        flightAmenities,
+        flightRating,
+        seatClass,
+        firstPrice,
+        businessPrice,
+        premiumPrice,
+        economyPrice} = req.body;
     try
     {
         if (!id)
         {
             return res.status(400).json({success:false, msg:"Invalid Input"});
         }
-        const updatedFlight = await Flight.findByIdAndUpdate(id, {flightName, departureCountry, departureCity, destinationCountry, destinationCity, totalSeats, flightDuration, premium, business, economy, first, economySeats, businessSeats, firstSeats, premiumSeats, flightAmenities, seatClass, flightRating}, {new:true});
+        if(!flightName || !departureCountry || !departureCity || !destinationCountry || !destinationCity || !departureDate || !arrivalDate || !totalSeats || !firstSeats || !businessSeats || !premiumSeats || !economySeats || !flightDuration || !flightAmenities || !flightRating || !seatClass || !firstPrice || !businessPrice || !premiumPrice || !economyPrice)
+        {
+            return res.status(400).json({success:false, msg:"Invalid Input"});
+        }
+        const flightClassPrice = {
+            first: firstPrice,
+            business: businessPrice,
+            premium: premiumPrice,
+            economy: economyPrice
+        }
+        const seatNumbers = {
+            firstSeats: firstSeats,
+            businessSeats: businessSeats,
+            premiumSeats: premiumSeats,
+            economySeats: economySeats
+        }
+        const updatedFlight = await Flight.findByIdAndUpdate(id, {flightName, departureCountry, departureCity, destinationCountry, destinationCity, totalSeats, flightDuration, seatClass, flightAmenities, flightRating, flightClassPrice, seatNumbers}, {new:true});
         console.log("Right after updating");
         console.log(updatedFlight);
         if (!updatedFlight)
         {
             return res.status(404).json({success:false, msg:`No flight found with id: ${id}`});
         }
-        console.log(`updatedFlight`); // testing: working
-        console.log(updatedFlight); // testing: working
+        // console.log(`updatedFlight`); // testing: working
+        // console.log(updatedFlight); // testing: working
         console.log(`Flight details updated successfully`);
-        return res.status(200).json({success:true, msg:"Flight details updated successfully", data:updatedFlight});
+        const new_flight_update = await Flight.findById({_id:id})
+        return res.status(200).json({success:true, msg:"Flight details updated successfully", data:new_flight_update});
     }
     catch(err)
     {
