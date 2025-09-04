@@ -37,6 +37,9 @@ export default function GetAllFlights()
 
     const handleUpdate = (id)=>{
         navigate(`/update/${id}`);
+    };
+    const handleDelete = (id)=>{
+        navigate(`/delete/${id}`);
     }
     return (
         <div>
@@ -66,7 +69,7 @@ export default function GetAllFlights()
                                 <tr key={flightItem._id}>
                                     <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{flightItem._id.slice(0,8)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">{flightItem.departureCountry} → {flightItem.destinationCountry}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">{new Date(flightItem.departureTime).toLocaleDateString()}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">{new Date(flightItem.departureDate).toLocaleDateString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">{flightItem.totalSeats}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">{flightItem.flightDuration}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium ">
@@ -75,7 +78,7 @@ export default function GetAllFlights()
                                                 <Edit onClick={()=>{handleUpdate(flightItem._id)}} className="h-4 w-4" />
                                             </button>
                                             <button title="Delete Flight" className="text-red-600 hover:text-red-900">
-                                                <Trash2  className="h-4 w-4" />
+                                                <Trash2 onClick={()=>{handleDelete(flightItem._id)}}  className="h-4 w-4" />
                                             </button>
                                             <button title="View Flight Details" className="text-blue-600 hover:text-blue-900">
                                                 <View className="h-4 w-4" />
